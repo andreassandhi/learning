@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H25-621 · HCSP-Presales-Storage V1.0 — Flashcards</title>
+<style>
+:root{
+  --bg:#0b0d12; --panel:#121521; --panel-2:#1a1f30;
+  --ink:#e8ecf4; --ink-dim:#98a2b8; --ink-faint:#5b6474;
+  --accent:#ff3d3d; --accent-2:#ffb020; --ok:#3ad29f; --warn:#ffb020;
+  --border:#232838; --border-2:#2b3247;
+  --font-display:"Crimson Pro", "Cormorant Garamond", Georgia, serif;
+  --font-body:"IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--font-body);min-height:100vh;-webkit-font-smoothing:antialiased}
+body{background:
+  radial-gradient(1200px 600px at 85% -10%, rgba(255,61,61,.08), transparent 60%),
+  radial-gradient(900px 500px at -10% 110%, rgba(255,176,32,.06), transparent 60%),
+  var(--bg);
+  padding:2rem 1rem 4rem;
+}
+
+.wrap{max-width:1100px;margin:0 auto}
+
+/* Header */
+.masthead{border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem;position:relative}
+.masthead::before{content:"HCSP · PRESALES · STORAGE";position:absolute;top:0;right:0;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.25em;color:var(--ink-faint)}
+.eyebrow{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.3em;color:var(--accent);text-transform:uppercase;margin-bottom:.6rem}
+h1{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800;line-height:1;letter-spacing:-.02em;margin-bottom:.6rem}
+h1 em{font-style:italic;color:var(--accent-2);font-weight:600}
+.subtitle{color:var(--ink-dim);font-size:.95rem;max-width:68ch;line-height:1.55}
+.subtitle strong{color:var(--ink)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin:1.5rem 0}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:.85rem 1rem}
+.stat-label{font-family:var(--font-mono);font-size:.65rem;letter-spacing:.2em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:.3rem}
+.stat-val{font-family:var(--font-display);font-size:1.8rem;font-weight:700;line-height:1}
+.stat-val.accent{color:var(--accent)}
+.stat-val.ok{color:var(--ok)}
+.stat-val.warn{color:var(--warn)}
+
+/* Controls */
+.controls{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
+.btn{background:var(--panel);color:var(--ink);border:1px solid var(--border);padding:.55rem 1rem;border-radius:4px;font-family:var(--font-mono);font-size:.78rem;letter-spacing:.08em;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{background:#e02020;color:#fff}
+.btn.ghost{background:transparent}
+
+.filters{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.5rem;padding:1rem;background:var(--panel);border:1px solid var(--border);border-radius:6px}
+.chip{background:var(--panel-2);border:1px solid var(--border-2);color:var(--ink-dim);padding:.4rem .8rem;border-radius:999px;font-family:var(--font-mono);font-size:.7rem;cursor:pointer;transition:all .15s;letter-spacing:.04em}
+.chip:hover{color:var(--ink);border-color:var(--ink-dim)}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip .count{opacity:.6;margin-left:.3rem}
+
+/* Card */
+.card-stage{perspective:1800px;margin-bottom:1.5rem}
+.card{
+  position:relative;width:100%;min-height:380px;
+  transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,.0,.2,1);
+  cursor:pointer;
+}
+.card.flipped{transform:rotateY(180deg)}
+.card-face{
+  position:absolute;width:100%;height:100%;min-height:380px;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:2.5rem 2rem 4rem;display:flex;flex-direction:column;
+}
+.card-face.back{transform:rotateY(180deg);background:linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%)}
+.card-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)}
+.card-meta .tag{color:var(--accent);font-weight:600}
+.card-meta .tag.v3{color:var(--accent-2)}
+.card-meta .id{color:var(--ink-faint)}
+.card-question{font-family:var(--font-display);font-size:1.5rem;line-height:1.35;font-weight:600;color:var(--ink);flex-grow:1;display:flex;align-items:center}
+.card-answer{color:var(--ink);font-size:.95rem;line-height:1.6;flex-grow:1;overflow-y:auto;max-height:320px;padding-right:.5rem}
+.card-answer::-webkit-scrollbar{width:6px}
+.card-answer::-webkit-scrollbar-track{background:transparent}
+.card-answer::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
+.card-answer strong{color:var(--accent-2);font-weight:600}
+.card-answer ul{margin:.5rem 0 .5rem 1.2rem}
+.card-answer li{margin-bottom:.3rem}
+.card-answer code{font-family:var(--font-mono);background:var(--panel);padding:.1rem .4rem;border-radius:3px;font-size:.85em;color:var(--ok)}
+.card-hint{position:absolute;bottom:1rem;left:2rem;right:2rem;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.15em;color:var(--ink-faint);text-transform:uppercase;display:flex;justify-content:space-between}
+
+/* Nav */
+.nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem}
+.nav-btn{background:var(--panel);border:1px solid var(--border);color:var(--ink);width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent);transform:scale(1.05)}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.progress-info{text-align:center;flex-grow:1}
+.progress-num{font-family:var(--font-display);font-size:1.6rem;font-weight:700}
+.progress-num .of{color:var(--ink-faint);font-weight:400}
+.progress-bar{width:100%;height:3px;background:var(--border);border-radius:2px;margin-top:.5rem;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg, var(--accent), var(--accent-2));transition:width .3s}
+
+/* Rating */
+.rating{display:flex;gap:.5rem;justify-content:center;margin-top:1rem}
+.rate-btn{background:transparent;border:1px solid var(--border-2);color:var(--ink-dim);padding:.6rem 1.2rem;border-radius:4px;font-family:var(--font-mono);font-size:.75rem;letter-spacing:.1em;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.rate-btn.again:hover{border-color:var(--accent);color:var(--accent)}
+.rate-btn.hard:hover{border-color:var(--warn);color:var(--warn)}
+.rate-btn.good:hover{border-color:var(--ok);color:var(--ok)}
+
+/* Footer note */
+.footnote{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--ink-faint);font-size:.8rem;line-height:1.6}
+.footnote strong{color:var(--ink-dim)}
+
+@media (max-width:640px){
+  .card-face{padding:2rem 1.25rem 3.5rem}
+  .card-question{font-size:1.2rem}
+  .card-answer{font-size:.9rem}
+  h1{font-size:2rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="eyebrow">Exam Prep · H25-621_V1.0 (English)</div>
+  <h1>Huawei <em>HCSP-Presales</em><br>Storage Flashcards</h1>
+  <p class="subtitle">
+    Interactive study deck built from the <strong>V1.0 Training Material</strong> (authoritative for this exam)
+    plus supplementary cards from the V3.0 material clearly tagged with a yellow marker.
+    Click a card to flip. Rate yourself to track mastery. Progress saves to this browser.
+  </p>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="stat-label">Total Cards</div><div class="stat-val" id="s-total">—</div></div>
+  <div class="stat"><div class="stat-label">Seen</div><div class="stat-val accent" id="s-seen">0</div></div>
+  <div class="stat"><div class="stat-label">Mastered</div><div class="stat-val ok" id="s-good">0</div></div>
+  <div class="stat"><div class="stat-label">Needs Review</div><div class="stat-val warn" id="s-hard">0</div></div>
+</div>
+
+<div class="controls">
+  <button class="btn primary" id="btn-shuffle">↯ Shuffle</button>
+  <button class="btn" id="btn-reset-order">↺ Reset Order</button>
+  <button class="btn" id="btn-only-unknown">Show Unmastered Only</button>
+  <button class="btn ghost" id="btn-reset-progress">Reset Progress</button>
+</div>
+
+<div class="filters" id="filters"></div>
+
+<div class="nav">
+  <button class="nav-btn" id="prev">←</button>
+  <div class="progress-info">
+    <div class="progress-num"><span id="p-cur">1</span><span class="of"> / <span id="p-tot">1</span></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="p-fill"></div></div>
+  </div>
+  <button class="nav-btn" id="next">→</button>
+</div>
+
+<div class="card-stage">
+  <div class="card" id="card">
+    <div class="card-face front">
+      <div class="card-meta">
+        <span class="tag" id="m-cat-f">—</span>
+        <span class="id" id="m-id-f">—</span>
+      </div>
+      <div class="card-question" id="q">Loading…</div>
+      <div class="card-hint">
+        <span>Click to reveal</span>
+        <span>↔ arrow keys · space to flip</span>
+      </div>
+    </div>
+    <div class="card-face back">
+      <div class="card-meta">
+        <span class="tag" id="m-cat-b">—</span>
+        <span class="id" id="m-id-b">—</span>
+      </div>
+      <div class="card-answer" id="a">—</div>
+      <div class="card-hint">
+        <span>Rate yourself below ↓</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="rating">
+  <button class="rate-btn again" data-rate="again">✕ Again</button>
+  <button class="rate-btn hard" data-rate="hard">◐ Hard</button>
+  <button class="rate-btn good" data-rate="good">✓ Got It</button>
+</div>
+
+<div class="footnote">
+  <p><strong>Scope note:</strong> Cards labelled <span style="color:var(--accent)">V1</span> come from the H25-621 V1.0 training material and are authoritative for this exam. Cards labelled <span style="color:var(--accent-2)">V3</span> are supplementary — use them for broader context but trust V1 wording if the two ever conflict on the same topic.</p>
+  <p style="margin-top:.6rem"><strong>Coverage:</strong> OceanStor Dorado (overview, hardware, software, SmartMatrix) · Smart Series · Hyper Series · Reliability (5-layer model, RAID-TP, metrics) · OceanStor Pacific · OceanProtect Backup · DCS Full-Stack · Ransomware Protection · V3 supplements: New-Gen Hybrid Flash, DMS, POC methodology.</p>
+</div>
+
+</div>
+
+<script>
+// ============ FLASHCARD DATA ============
+const CARDS = [
+  // ===================== DORADO OVERVIEW (V1) =====================
+  {cat:"Dorado Overview", src:"V1", q:"What is the Huawei OceanStor Dorado product line?",
+   a:"An <strong>intelligent all-flash storage series</strong> with scale-up/scale-out capability, built on Huawei-developed hardware and the <strong>SmartMatrix</strong> fully-interconnected architecture for symmetric active-active services. Uses proprietary flagship hardware with <strong>FlashLink®</strong> intelligent algorithms and <strong>end-to-end NVMe</strong>."},
+
+  {cat:"Dorado Overview", src:"V1", q:"List the OceanStor Dorado V6 product models by tier.",
+   a:"<strong>Entry-level:</strong> Dorado 3000<br><strong>Mid-range:</strong> Dorado 5000, Dorado 6000<br><strong>High-end:</strong> Dorado 8000, Dorado 18000"},
+
+  {cat:"Dorado Overview", src:"V1", q:"What are the three headline highlights of OceanStor Dorado?",
+   a:"<strong>Ever Fast</strong> — Industry-leading performance (21M IOPS, 0.05 ms latency, 30% higher NAS perf).<br><strong>Ever Solid</strong> — SmartMatrix fully-interconnected architecture, tolerates failure of 7 out of 8 controllers, active-active for SAN & NAS.<br><strong>Intelligent</strong> — Full-lifecycle management, intelligent O&M, edge-cloud collaboration."},
+
+  {cat:"Dorado Overview", src:"V1", q:"Dorado 8000/18000 — controllers per engine, maximum controller expansion, maximum disks?",
+   a:"<strong>4U, 4 controllers per engine.</strong> Controller expansion: <strong>2–32</strong>. Maximum disks: 3,200 (8000) / 4,800–6,400 (18000)."},
+
+  {cat:"Dorado Overview", src:"V1", q:"Dorado 5000/6000 — form factor, controller expansion?",
+   a:"<strong>2U, 2 controllers per engine.</strong> Controller expansion: <strong>2–16</strong>. Max disks: 1,600 (5000) / 2,400 (6000)."},
+
+  {cat:"Dorado Overview", src:"V1", q:"Dorado 3000 — form factor and scale?",
+   a:"<strong>2U, 2 controllers.</strong> Controller expansion: <strong>2–4</strong>. Max disks: 1,200. Initial config as low as 128 GB cache."},
+
+  {cat:"Dorado Overview", src:"V1", q:"What front-end port types does Dorado support?",
+   a:"8/16/32 Gbit/s <strong>FC / FC-NVMe</strong>, 10GE, 25GE, 40GE, 100GE, and <strong>25/100 Gbit/s NVMe over RoCE</strong>."},
+
+  {cat:"Dorado Overview", src:"V1", q:"What back-end port types does Dorado use?",
+   a:"<strong>SAS 3.0</strong> and <strong>100GE (RDMA / NVMe over RoCE)</strong>."},
+
+  // ===================== HARDWARE ARCHITECTURE (V1) =====================
+  {cat:"Hardware", src:"V1", q:"In a Dorado 8000/18000 4U enclosure, what is the order of controllers top-to-bottom?",
+   a:"<strong>A – C – B – D</strong> (top to bottom). <strong>A & B</strong> are mirrored; <strong>C & D</strong> are mirrored — pairs for redundancy."},
+
+  {cat:"Hardware", src:"V1", q:"In a Dorado high-end 4U enclosure, how many interface modules are supported and how are slots numbered?",
+   a:"Up to <strong>28 interface modules</strong> shared by all controllers. Upper slots: <strong>IOM H0–H13</strong>. Lower slots: <strong>IOM L0–L13</strong>. Modules should be installed in pairs (same module in matching upper & lower slots) for reliability."},
+
+  {cat:"Hardware", src:"V1", q:"How many BBUs and management modules does a high-end Dorado 4U controller enclosure have?",
+   a:"<strong>BBU:</strong> one per controller (powers its controller independently).<br><strong>Management board:</strong> 1+1 redundancy, hot-swappable. Each module provides 1 serial port + 1 management port + 2 maintenance ports.<br><strong>Fan:</strong> 6+1 redundancy per controller. <strong>Power:</strong> 2+2 redundancy (100–240V AC / 240V HVDC)."},
+
+  {cat:"Hardware", src:"V1", q:"Which interface module slots are used for back-end expansion on a Dorado 8000/18000?",
+   a:"<strong>H5–H8 and L5–L8</strong> are back-end interface slots (support up to 800 disks per enclosure). Installation sequence is center-to-edge: H6/L6 → H7/L7 → H5/L5 → H8/L8, skipping slot 3 and slot 10 (reserved for scale-out)."},
+
+  {cat:"Hardware", src:"V1", q:"Where are scale-out interface modules installed on a Dorado high-end enclosure?",
+   a:"Up to <strong>4 scale-out interface modules</strong>, installed first in <strong>H3 & L3</strong>, then <strong>H10 & L10</strong>."},
+
+  {cat:"Hardware", src:"V1", q:"What are the form factors of Dorado SSDs and their capacities?",
+   a:"<strong>2.5-inch SAS SSD:</strong> 960 GB / 1.92 / 3.84 / 7.68 / 15.36 / 30.72 TB — 25 disks per 2U.<br><strong>Palm-sized NVMe SSD (9.5 mm):</strong> 1.92 / 3.84 / 7.68 / 15.36 TB — <strong>36 disks per 2U</strong> (+44% density vs 2.5-inch)."},
+
+  {cat:"Hardware", src:"V1", q:"On a 2U Dorado 5000/6000 NVMe enclosure, how are disk slots numbered and how many interface module slots per controller?",
+   a:"Disk slots numbered <strong>0–35</strong> (left to right). Each controller has <strong>6 interface module slots</strong> (IOM 0–IOM 5). Onboard ports are <strong>100 Gbit/s RDMA</strong>."},
+
+  {cat:"Hardware", src:"V1", q:"On a Dorado 3000 V6 controller, what is the rule for installing the scale-out interface module?",
+   a:"The scale-out interface module <strong>must be installed in slot IOM 1</strong>. Back-end expansion order: IOM 2 → IOM 1 → IOM 0. Front-end module order: IOM 0 → IOM 1 → IOM 2."},
+
+  // ===================== SOFTWARE ARCHITECTURE (V1) =====================
+  {cat:"Software Architecture", src:"V1", q:"What are the four layers of the OceanStor Dorado all-flash native unified architecture?",
+   a:"<strong>1. Protocol layer</strong> — FC/iSCSI/NVMe-oF, NFS/CIFS; DTOE offload.<br><strong>2. Data service layer</strong> — Smart & Hyper series features; LUNs and file systems in same pool.<br><strong>3. Global cache layer</strong> — SAN/NAS global cache sharing; metadata/fingerprint/data cache.<br><strong>4. Space management layer</strong> — Active-active data space management for LUNs; space management for NAS distributed FS.<br><strong>+ Storage pool layer</strong> — FlashLink-based global pool: global dedup, compression, similarity reduction, global wear-leveling, global garbage collection."},
+
+  {cat:"Software Architecture", src:"V1", q:"What is DTOE and what advantage does it give Dorado?",
+   a:"<strong>Direct TCP Offload Engine</strong> — offloads iSCSI, NFS, and CIFS processing. DTOE mode <strong>saves one memory copy</strong> compared with the standard TCP mode, delivering higher performance."},
+
+  {cat:"Software Architecture", src:"V1", q:"What does FlashLink provide in the Dorado storage pool?",
+   a:"A global storage pool shared by SAN and NAS, providing:<br>• Global <strong>deduplication</strong><br>• <strong>Compression</strong><br>• <strong>Similarity-based</strong> data reduction<br>• Global <strong>wear leveling</strong><br>• Global <strong>garbage collection</strong><br>• <strong>Full-stripe write</strong> technique that improves SSD service life"},
+
+  {cat:"Software Architecture", src:"V1", q:"How does Dorado's global cache distribute I/O across controllers?",
+   a:"It uses a method similar to <strong>virtual memory address space management</strong> in an OS — the memory of each controller is uniformly addressed, so I/Os are evenly distributed from front-end links to controllers. This balances load and reduces latency."},
+
+  // ===================== SMARTMATRIX (V1) =====================
+  {cat:"SmartMatrix", src:"V1", q:"What is SmartMatrix?",
+   a:"Huawei's <strong>fully-interconnected (full-mesh) architecture</strong> for Dorado high-end. Front-end ports, controllers, and back-end SSD enclosures are all interconnected so every controller can access every port and every disk enclosure. This is what enables symmetric active-active SAN & NAS and extreme fault tolerance."},
+
+  {cat:"SmartMatrix", src:"V1", q:"How many controller failures can SmartMatrix (Dorado high-end) tolerate without service interruption?",
+   a:"<strong>7 out of 8 controllers</strong> can fail one by one across 2 engines, and services still continue. This is the industry's unique capability — other vendors' high-end only tolerate a single engine (2 or 4 controllers) failure."},
+
+  {cat:"SmartMatrix", src:"V1", q:"How is write cache data protected against controller-enclosure failure in SmartMatrix?",
+   a:"Write cache data is held in <strong>three cache copies distributed across controller enclosures</strong>. If one controller enclosure fails, the remaining enclosures still have a valid cache copy. Back-end smart SSD enclosures are connected to all 8 controllers via back-end interconnect I/O modules, so a surviving controller enclosure can still access all SSD enclosures."},
+
+  // ===================== SMART SERIES (V1) =====================
+  {cat:"Smart Series", src:"V1", q:"What is SmartThin?",
+   a:"<strong>Thin provisioning.</strong> Presents a virtual capacity larger than physical; allocates space on demand (capacity-on-write).<br>Functions:<br>• Thin LUN capacity virtualization<br>• Capacity-on-write<br>• Online thin LUN capacity expansion (pool + LUN)<br>• Thin LUN space reclamation (SCSI UNMAP + all-zero reclamation)"},
+
+  {cat:"Smart Series", src:"V1", q:"What is SmartQoS and what three controls does it provide?",
+   a:"<strong>Intelligent service quality control</strong> — sets performance targets for applications to ensure mission-critical performance.<br><strong>1. Upper Limit Control</strong> — caps IOPS / bandwidth / latency for low-priority LUNs.<br><strong>2. Burst Quota</strong> — accumulates unused tokens (per-second) to absorb traffic bursts.<br><strong>3. Lower Limit Guarantee</strong> — minimum IOPS/bandwidth; when system is overloaded, high-load LUNs are throttled until low-load LUNs reach their lower limit."},
+
+  {cat:"Smart Series", src:"V1", q:"How does SmartQoS implement priority internally?",
+   a:"Using <strong>I/O tokens</strong>. The system converts control objectives into a number of tokens; I/Os can only be dequeued when sufficient tokens are obtained, otherwise return BUSY. I/O queues are classified into <strong>high / medium / low</strong> priority, and token allocation is adjusted to favor high-priority queues."},
+
+  {cat:"Smart Series", src:"V1", q:"What's the difference between SmartDedupe and SmartCompression?",
+   a:"<strong>SmartDedupe</strong> removes duplicate data blocks (inline, similarity-based, post-process).<br><strong>SmartCompression</strong> reorganizes data to reduce size without data loss — supports data compaction and inline compression.<br>Both are part of the FlashLink intelligent algorithms."},
+
+  {cat:"Smart Series", src:"V1", q:"Define the key fingerprint concepts used by SmartDedupe.",
+   a:"<strong>Fingerprint:</strong> fixed-length binary value identifying a block; stored in the fingerprint table mapping fingerprint → block location.<br><strong>Similar Fingerprint (SFP):</strong> identifies partial similarity between blocks.<br><strong>Gradient Fingerprint (GFP):</strong> ranks multiple SFPs so most similar blocks are deduped first.<br><strong>Opportunity table:</strong> tracks fingerprints/locations and identifies hot data.<br><strong>Byte-by-byte comparison:</strong> final check when fingerprints match, to guarantee no false positive."},
+
+  {cat:"Smart Series", src:"V1", q:"What is SmartVirtualization?",
+   a:"<strong>Heterogeneous storage virtualization.</strong> Lets a Dorado take over a third-party or legacy Huawei array and present its LUNs locally as <strong>eDevLUNs</strong>. The physical space on Dorado stores only metadata; actual data stays on the heterogeneous array. Supports <strong>online takeover</strong> (no service interruption) and <strong>offline takeover</strong>."},
+
+  {cat:"Smart Series", src:"V1", q:"What is SmartMigration?",
+   a:"<strong>Non-disruptive LUN migration</strong> within a storage system or between storage systems. Uses a source LUN, target LUN, and a <strong>dual-write</strong> mechanism during synchronization. Commonly paired with SmartVirtualization to migrate data from a legacy array onto Dorado without interruption."},
+
+  {cat:"Smart Series", src:"V1", q:"What is the difference between SmartVirtualization's offline vs. online takeover?",
+   a:"<strong>Offline takeover:</strong> connection between heterogeneous array and host is down — service interrupted temporarily.<br><strong>Online takeover:</strong> connections stay up — no service interruption, continuity and data integrity preserved. Implemented by setting masquerading properties on the eDevLUNs."},
+
+  // ===================== HYPER SERIES (V1) =====================
+  {cat:"Hyper Series", src:"V1", q:"What is HyperSnap?",
+   a:"Huawei's <strong>point-in-time snapshot</strong> feature. Captures data state of LUN/file system at a moment. Read-only by default; enables backup, testing, and rapid recovery."},
+
+  {cat:"Hyper Series", src:"V1", q:"What is HyperCDP and how does it differ from HyperSnap?",
+   a:"<strong>HyperCDP</strong> is high-density continuous data protection — creates many lightweight snapshots on a schedule. Difference: <strong>Snap vs CDP is scheduling policy</strong> — use CDP when you need device-driven scheduled protection policy; use Snap for manual/discrete captures. CDP allows much higher snapshot density (thousands)."},
+
+  {cat:"Hyper Series", src:"V1", q:"What is HyperClone?",
+   a:"A <strong>writeable fast snapshot</strong>. For NAS, a new file system that shares data at a point in time with the original; clients can access it only after separate sharing is configured. Supports cross-tenant authentication."},
+
+  {cat:"Hyper Series", src:"V1", q:"What is HyperVault?",
+   a:"Backup & recovery feature that combines <strong>HyperCDP + HyperReplication</strong>.<br>• <strong>Local backup:</strong> uses local HyperCDP policy.<br>• <strong>Remote backup:</strong> asynchronously synchronizes tagged HyperCDP snapshots to a secondary storage system.<br>Each backup copy contains full data at its backup point in time; copies are independent — deleting one doesn't affect others."},
+
+  {cat:"Hyper Series", src:"V1", q:"What two replication modes does HyperReplication support?",
+   a:"<strong>Synchronous remote replication</strong> — real-time synchronization between two arrays, maximum data consistency, minimal RPO. Used for short-distance DR.<br><strong>Asynchronous remote replication</strong> — periodic synchronization, minimizes performance impact from long-distance latency. Used for long-distance DR."},
+
+  {cat:"Hyper Series", src:"V1", q:"What are the four phases of a HyperReplication task?",
+   a:"<strong>1.</strong> Create a pair from two LUNs (multiple pairs form a consistency group).<br><strong>2.</strong> Initial full synchronization from primary → secondary, then periodic incremental sync.<br><strong>3.</strong> Perform a switchover to form a new pair (secondary becomes writable).<br><strong>4.</strong> Synchronize data back from secondary → primary, then switch over to restore original roles."},
+
+  {cat:"Hyper Series", src:"V1", q:"For NAS HyperReplication, what is a vStore pair?",
+   a:"A <strong>remote replication vStore pair</strong> represents the relationship between vStores on primary and secondary storage. It synchronizes both <strong>vStore configuration</strong> and <strong>file system data</strong>. A vStore is a virtual storage system — a physical array can host many vStores sharing a pool."},
+
+  {cat:"Hyper Series", src:"V1", q:"What is HyperMetro and what are its key characteristics?",
+   a:"<strong>Active-active</strong> storage solution for SAN & NAS.<br>• <strong>RPO = 0, RTO ≈ 0</strong><br>• <strong>Gateway-free</strong>, single network between arrays<br>• <strong>Symmetric</strong> active-active — both sites read/write the same LUN/FS concurrently<br>• <strong>Dual arbitration</strong> mechanism for reliability<br>• FC uses NoF FastWrite (halves cross-site I/O); IP uses RDMA<br>• Only <strong>one synchronization</strong> per write between sites<br>• Can combine with HyperReplication for 3DC geo-redundancy"},
+
+  {cat:"Hyper Series", src:"V1", q:"How does HyperMetro handle a write I/O from the host?",
+   a:"<strong>1.</strong> Host sends write to HyperMetro I/O processing module.<br><strong>2.</strong> Module writes to caches of BOTH local and remote storage systems simultaneously (dual-write).<br><strong>3.</strong> Both caches return the result.<br><strong>4.</strong> Module returns the write result to the host.<br>Uses <strong>Data Change Log (DCL)</strong> to track and synchronize changes, ensuring consistency."},
+
+  {cat:"Hyper Series", src:"V1", q:"How does HyperMetro handle a read I/O from the host?",
+   a:"<strong>1.</strong> Host sends read to HyperMetro I/O processing module.<br><strong>2.</strong> Module directs the local storage system to respond (local-priority read).<br><strong>3.</strong> If local is operational → returns data.<br><strong>4.</strong> If local is not operational → remote system returns data.<br>Result is returned to host. Reading locally avoids cross-site round-trips."},
+
+  {cat:"Hyper Series", src:"V1", q:"What role does the quorum server play in HyperMetro?",
+   a:"Arbitrates which site continues service when links between two arrays break or one site fails. With quorum, HyperMetro can use <strong>preferred-site</strong> and <strong>intelligent arbitration</strong>.<br>If no quorum server is configured or it's inaccessible, HyperMetro uses <strong>static priority mode</strong> — the preferred site continues providing services; non-preferred site stops LUN access."},
+
+  {cat:"Hyper Series", src:"V1", q:"If the preferred site fails in static-priority (no-quorum) HyperMetro, what happens?",
+   a:"The non-preferred site <strong>does NOT take over automatically</strong> — services stop until you <strong>manually force-start</strong> the HyperMetro pair on the surviving site. This is why a quorum server is recommended for real DR scenarios."},
+
+  // ===================== RELIABILITY (V1) =====================
+  {cat:"Reliability", src:"V1", q:"Define MTBF, MTTR, and Availability.",
+   a:"<strong>MTBF</strong> (Mean Time Between Failures): average time between consecutive failures.<br><strong>MTTR</strong> (Mean Time To Recover): average repair time.<br><strong>Availability A = MTBF / (MTBF + MTTR)</strong> — expressed in x nines (99.9…%).<br><strong>Failure rate λ = 1/MTBF</strong>; 1 FIT = 10⁻⁹ /hour.<br><strong>Annual downtime DT (min/yr) = (1 − A) × 8760 × 60</strong>."},
+
+  {cat:"Reliability", src:"V1", q:"What annual downtime corresponds to 5, 6, and 7 nines of availability?",
+   a:"<strong>5 nines (99.999%):</strong> ~300 seconds (5 min) per year.<br><strong>6 nines (99.9999%):</strong> ~30 seconds per year.<br><strong>7 nines (99.99999%):</strong> ~3 seconds per year."},
+
+  {cat:"Reliability", src:"V1", q:"What availability levels do Dorado V6 entry/mid-range vs high-end achieve, with and without HyperMetro?",
+   a:"<strong>Entry-level & Mid-range Dorado V6 (and V3/V5):</strong> <strong>5 nines</strong> natively; <strong>6 nines</strong> with HyperMetro.<br><strong>High-end Dorado V6:</strong> <strong>6 nines</strong> with HyperMetro-Inner + Continuous Mirroring; <strong>7 nines</strong> with HyperMetro."},
+
+  {cat:"Reliability", src:"V1", q:"What are the three levels of Huawei OceanStor storage reliability design?",
+   a:"<strong>Level 1 — Module:</strong> hardware reliability (components, device, environment, production, disk). Ensured by lean manufacturing and engineering.<br><strong>Level 2 — System:</strong> fault self-healing and data integrity via redundancy and software logic (cache copies, RAID 2.0+, reconstruction offloading, HyperMetro-Inner, HyperSnap, slow-disk isolation).<br><strong>Level 3 — DC:</strong> data protection and DR solutions — HyperMetro (active-active), 3DC geo-redundancy, HyperReplication."},
+
+  {cat:"Reliability", src:"V1", q:"What is RAID-TP and what failure scenarios does it protect against?",
+   a:"RAID with <strong>Triple Parity</strong> — protects data even when <strong>three disks fail simultaneously</strong>. Provides disk-level redundancy in Dorado's global storage pool. Goes beyond traditional RAID 6 (which tolerates 2-disk failure). Used with RAID 2.0+ chunk-based layout."},
+
+  {cat:"Reliability", src:"V1", q:"What are the three redundancy levels of Dorado's End-to-End data protection?",
+   a:"<strong>1. Cache data redundancy</strong> — 2 or 3 copies across controllers/enclosures, no loss even if multiple controllers or a whole enclosure fail.<br><strong>2. Disk data redundancy</strong> — RAID 2.0+ tolerates multiple consecutive or simultaneous disk failures; reconstruction is offloaded to smart disk enclosures.<br><strong>3. Intra-disk data redundancy</strong> — RAID 4 at die level inside each SSD; protects against bad blocks or die failure.<br>Plus <strong>dynamic reconstruction</strong> even when fewer disks than normal are available."},
+
+  {cat:"Reliability", src:"V1", q:"What is RAID 2.0+?",
+   a:"Huawei's <strong>chunk-based RAID</strong> — disks are divided into small fixed-size chunks, and data is distributed across chunks from many disks instead of fixed disk groups. Benefits: faster rebuild (many disks participate), better load balancing, and less impact on performance during reconstruction."},
+
+  // ===================== 3DC / DC-LEVEL (V1) =====================
+  {cat:"Reliability", src:"V1", q:"What are the typical 3DC networking modes supported between OceanStor Dorado systems?",
+   a:"Combinations of <strong>HyperMetro</strong> (active-active) and <strong>HyperReplication</strong> (sync or async), producing geo-redundant 3-data-center layouts such as:<br>• HyperMetro (DC1–DC2) + HyperReplication async (DC1/DC2 → DC3)<br>• Cascaded synchronous + asynchronous replication<br>Protects against both metro and geographic disasters."},
+
+  // ===================== OCEANSTOR PACIFIC (V1) =====================
+  {cat:"OceanStor Pacific", src:"V1", q:"What is OceanStor Pacific?",
+   a:"Huawei's <strong>intelligent distributed (scale-out) storage</strong> series — massive-data oriented, supports hybrid workloads (HPC, big data/AI, resource pool, electronic imaging, backup/archive). Converges <strong>file, object, HDFS, block</strong> in a single system with multi-protocol interworking and lossless protocol translation."},
+
+  {cat:"OceanStor Pacific", src:"V1", q:"Name the main OceanStor Pacific capacity vs performance models.",
+   a:"<strong>Capacity-focused:</strong> Pacific <strong>9520 / 9540 / 9550</strong> (9550 is high-density large-capacity, 5U/2 nodes).<br><strong>Performance-focused:</strong> Pacific <strong>9920 / 9950</strong> (9920 is all-SSD 2U/1 node; 9950 uses half-palm NVMe SSDs).<br><strong>Balanced:</strong> Pacific <strong>9640</strong> (4U 1-node or 4U 2-node variants)."},
+
+  {cat:"OceanStor Pacific", src:"V1", q:"What protocols can OceanStor Pacific serve?",
+   a:"<strong>File:</strong> NFS, SMB, POSIX, MPI-IO<br><strong>Object:</strong> S3<br><strong>HDFS</strong><br><strong>Block:</strong> iSCSI, VBS (Virtual Block Service — SCSI)<br><strong>HPC:</strong> DPC (Distributed Parallel Client) over RDMA<br>Plus lossless multi-protocol interworking — same data accessible via different protocols."},
+
+  {cat:"OceanStor Pacific", src:"V1", q:"What CPU architectures does Pacific support?",
+   a:"<strong>x86</strong> and <strong>Huawei Kunpeng 920</strong> (48-core or 64-core depending on model). Kunpeng models include BBU protection for cache."},
+
+  {cat:"OceanStor Pacific", src:"V1", q:"What network types does Pacific use?",
+   a:"<strong>Front-end service:</strong> 10GE / 25GE / 100GE TCP/IP, 25GE or 100GE RoCE, 100 Gb/s EDR/HDR InfiniBand.<br><strong>Storage interconnect (backend):</strong> 10GE/25GE/100GE RoCE, 100 Gb/s EDR InfiniBand."},
+
+  // ===================== OCEANPROTECT (V1) =====================
+  {cat:"OceanProtect", src:"V1", q:"What is OceanProtect and what are its product tiers?",
+   a:"Huawei's <strong>dedicated backup storage</strong> series (flash-based).<br><strong>Entry:</strong> X3000 (2 controllers, up to 300 TB)<br><strong>Mid-range:</strong> X6000 (up to 800 TB)<br><strong>High-end entry:</strong> X8000 (up to 2 PB)<br><strong>High-end flagship:</strong> X9000 (4-controller, up to 3.6 PB)"},
+
+  {cat:"OceanProtect", src:"V1", q:"What is the advertised maximum data reduction ratio of OceanProtect, and what are X9000's headline bandwidths?",
+   a:"Data reduction: <strong>up to 72:1</strong>.<br>X9000 bandwidths: physical backup <strong>155 TB/h</strong>, logical backup <strong>310 TB/h</strong>, recovery <strong>172 TB/h</strong>."},
+
+  {cat:"OceanProtect", src:"V1", q:"What front-end protocols does OceanProtect support?",
+   a:"<strong>NFS, SMB/CIFS, FC, iSCSI, S3, FTP/SFTP, NDMP</strong> (entry-level X3000 is NFS/SMB/CIFS/FC/iSCSI/NDMP — no S3/FTP). Supports 8/16/32 Gbit/s FC and 10/25/40/100 GE ports."},
+
+  {cat:"OceanProtect", src:"V1", q:"Name common backup-software integrations supported by OceanProtect.",
+   a:"<strong>Commvault, Veritas NetBackup, Veeam</strong> — via standard NFS/CIFS, FC/iSCSI targets, S3, or OpenStorage (OST) for NetBackup. Supports A.I.R. (Accelerator Integrated Replication) with NetBackup, and Cloud Tier with Veeam to tier to OceanStor Pacific (object)."},
+
+  {cat:"OceanProtect", src:"V1", q:"What is the OceanProtect + Commvault replication solution?",
+   a:"Commvault backs up production data to OceanProtect at the primary site; OceanProtect's <strong>native replication</strong> copies backup data asynchronously to OceanProtect at the DR site. Commvault at DR can then recover from the replicated copy without re-reading production."},
+
+  {cat:"OceanProtect", src:"V1", q:"What is A.I.R. in the NetBackup + OceanProtect solution?",
+   a:"<strong>Accelerator Integrated Replication</strong> — NetBackup uses OpenStorage (OST) to drive backup; OceanProtect replicates backup copies between sites, and NetBackup at the DR site can import the replicated images directly. Reduces WAN traffic and avoids re-reading source data."},
+
+  // ===================== RANSOMWARE PROTECTION (V1) =====================
+  {cat:"Ransomware", src:"V1", q:"What are the pillars of Huawei's End-to-End ransomware protection for backup copies?",
+   a:"<strong>Data anti-tampering:</strong> WORM (HyperLock).<br><strong>Ransomware detection:</strong> entropy/behavior analysis on copies and on production.<br><strong>Air Gap:</strong> isolated copy on a replicated/tiered array that is offline except during sync windows.<br><strong>Data leakage prevention:</strong> storage encryption, protocol encryption.<br><strong>Secure transmission + recovery-ready copies</strong> for rapid restoration."},
+
+  {cat:"Ransomware", src:"V1", q:"What is HyperLock?",
+   a:"Huawei's <strong>WORM (Write-Once-Read-Many)</strong> feature. Once files are committed, they cannot be modified or deleted until the retention period expires — protects against ransomware encryption and tampering. Applied at file-system level on Dorado NAS and OceanProtect."},
+
+  {cat:"Ransomware", src:"V1", q:"What is an 'Air Gap' copy in the Huawei ransomware protection model?",
+   a:"An <strong>isolated backup copy</strong> stored on a replica array that is kept <strong>disconnected (air-gapped)</strong> except during a scheduled short synchronization window. During an attack, the air-gap copy is unreachable to the ransomware. Combined with WORM and ransomware detection, it ensures a clean recoverable copy exists."},
+
+  // ===================== DCS SOLUTION (V1) =====================
+  {cat:"DCS Solution", src:"V1", q:"What is Huawei's DCS Full-Stack Datacenter Solution?",
+   a:"A <strong>full-stack data center solution</strong> combining compute virtualization (FusionCompute / eSphere), storage (OceanStor, OceanProtect, Pacific), and unified management (eDME) to meet digital transformation and modern DC needs. Covers server, storage, network, and management layers."},
+
+  {cat:"DCS Solution", src:"V1", q:"What are the two main components of FusionCompute?",
+   a:"<strong>VRM (Virtual Resource Management):</strong> management node — unified management of compute/storage/network resources, scheduling, provisioning, and O&M.<br><strong>CNA (Compute Node Agent):</strong> runs on each compute host — provides virtualization, manages VMs and local compute/storage/network resources."},
+
+  {cat:"DCS Solution", src:"V1", q:"What are FusionCompute's headline virtualization capabilities?",
+   a:"<strong>Simplified:</strong> 2-node minimal deployment, delivery in 2 hours; unified VDC-level management; visual branch-site management.<br><strong>Ultra-fast:</strong> NUMA topology optimization + hugepage memory → 30% higher VM perf; OVS+DPDK → 6× faster network forwarding; Ascend AI acceleration.<br><strong>Multi-architecture:</strong> hybrid x86 / Kunpeng / Phytium / Hygon clusters; same virtualization engine as Huawei cloud."},
+
+  {cat:"DCS Solution", src:"V1", q:"What is Intelligent Memory Overcommitment in FusionCompute?",
+   a:"Three techniques that let VM memory allocation exceed physical RAM (~50% higher VM density):<br>• <strong>Memory sharing / copy-on-write</strong> — dedup identical pages across VMs.<br>• <strong>Memory swapping</strong> — swap cold VM memory to disk.<br>• <strong>Memory bubble (ballooning)</strong> — reclaim idle memory from guests back to the hypervisor."},
+
+  // ===================== PRESALES / POSITIONING (V1) =====================
+  {cat:"Presales", src:"V1", q:"How is Dorado positioned for a NAS-heavy high-performance workload?",
+   a:"Dorado NAS is positioned for <strong>pure performance scenarios</strong> — EDA simulation, financial data exchange platforms, carrier CDRs, etc. It claims <strong>30% higher NAS performance</strong> than the industry benchmark. Recommended for use cases where NAS latency and throughput are critical."},
+
+  {cat:"Presales", src:"V1", q:"When should Dorado 8000 vs 18000 be chosen?",
+   a:"<strong>Dorado 8000:</strong> breaks into core applications based on NVMe & intelligent tech; tolerates 3 out of 4 controllers failing; full interconnection.<br><strong>Dorado 18000:</strong> builds competitiveness on high-end architecture — choose when the customer needs the maximum scale, highest performance and most stringent DR requirements."},
+
+  {cat:"Presales", src:"V1", q:"Why would you recommend OceanStor Pacific over Dorado?",
+   a:"Pacific is appropriate when the customer has:<br>• Massive unstructured data (PB/EB scale)<br>• Need for <strong>scale-out</strong> with many nodes<br>• Mixed workloads across <strong>file + object + HDFS + block</strong> with multi-protocol interworking<br>• HPC, big data / AI, electronic imaging, backup/archive use cases<br>Dorado remains the pick for traditional SAN/NAS mission-critical primary storage."},
+
+  {cat:"Presales", src:"V1", q:"What's a simple test to decide between HyperReplication and HyperMetro?",
+   a:"<strong>HyperMetro</strong> if the customer needs <strong>RPO=0 and RTO≈0</strong> (zero data loss, near-zero switchover) AND distance between sites is short enough (low-latency links, typically ≤ 100–300 km).<br><strong>HyperReplication sync</strong> if zero RPO is needed but only one site serves production at a time.<br><strong>HyperReplication async</strong> for long-distance DR (RPO in minutes is acceptable, and link latency rules out sync)."},
+
+  {cat:"Presales", src:"V1", q:"What is the recommended architecture for a bank or operator requiring 7-nines availability?",
+   a:"<strong>Dorado high-end (8000/18000)</strong> with <strong>SmartMatrix</strong> + <strong>HyperMetro</strong> between two DCs, plus asynchronous <strong>HyperReplication</strong> to a third DC for geo-redundancy (3DC). HyperMetro gives 7-nines on the primary pair; async replication protects against regional disaster."},
+
+  // ===================== V3 SUPPLEMENT — NEW-GEN HYBRID FLASH =====================
+  {cat:"New-Gen Hybrid Flash", src:"V3", q:"What is the New-Gen OceanStor Hybrid Flash Storage?",
+   a:"A newly developed <strong>hybrid flash product</strong> that inherits Dorado's architecture and features but uses a mix of SSD + HDD for cost-effective capacity. Same software stack — FlashLink algorithms, SmartMatrix (for high-end), Smart/Hyper series features. Positioned for workloads that need enterprise features at lower cost/TB than all-flash."},
+
+  {cat:"New-Gen Hybrid Flash", src:"V3", q:"When would you recommend hybrid flash over all-flash Dorado?",
+   a:"When the workload is:<br>• Mixed hot/cold data where cost/TB matters more than micro-second latency<br>• Large-capacity primary storage with tiering via SmartTier<br>• Secondary workloads (dev/test, archive-adjacent)<br>while still needing Huawei's enterprise feature set (HyperMetro, HyperReplication, SmartDedupe/Compression, etc.)."},
+
+  // ===================== V3 SUPPLEMENT — DMS =====================
+  {cat:"DMS", src:"V3", q:"What is Huawei DMS (Data Management Solution)?",
+   a:"A three-layer management solution:<br><strong>Top — DME IQ (Hi-Cloud):</strong> cloud-based analytics/insight platform.<br><strong>Middle — DME (on-premises manager):</strong> unified lifecycle management of storage devices.<br><strong>Bottom — device agents on storage arrays.</strong><br>Provides visibility, predictive analytics, capacity/performance planning, and automation across the fleet."},
+
+  {cat:"DMS", src:"V3", q:"What value does DME IQ bring to presales?",
+   a:"Cloud-based <strong>AI-driven insight</strong> — predicts capacity and performance trends, detects anomalies, recommends tuning. Lets the customer justify investment decisions with data and reduces unplanned outages via predictive maintenance. Useful talking point for CxO-level discussions on TCO and O&M efficiency."},
+
+  // ===================== V3 SUPPLEMENT — POC =====================
+  {cat:"POC Methodology", src:"V3", q:"What is the purpose of a POC (Proof of Concept) test in a storage sales cycle?",
+   a:"A POC is designed around the <strong>specific service requirements of a specific customer</strong>. Purpose: determine whether the proposed solution meets the customer's service needs — performance, reliability, feature fit — before purchase. POCs should be scoped to real-world workloads, not generic benchmarks."},
+
+  {cat:"POC Methodology", src:"V3", q:"Key principles when designing a storage POC?",
+   a:"• <strong>Start from service requirements</strong>, not vendor feature lists.<br>• Use the customer's actual workload pattern (or a faithful simulation) — block size, read/write ratio, concurrency.<br>• Define <strong>measurable success criteria</strong> upfront (IOPS, latency at target QD, failover RTO, rebuild time, data-reduction ratio).<br>• Include <strong>failure-injection tests</strong> (controller pull, disk pull, link down).<br>• Record methodology so the customer can audit results."},
+
+  // ===================== O&M RELIABILITY (V1) =====================
+  {cat:"Reliability", src:"V1", q:"What O&M-reliability techniques does OceanStor use to handle faulty or slow disks?",
+   a:"<strong>Bad block/sector scanning:</strong> proactive scrubbing.<br><strong>Quick response to slow I/Os:</strong> detect latency spikes.<br><strong>Isolation of slow disks:</strong> automatically remove misbehaving disks from active serving, replace with spare.<br><strong>Online diagnosis:</strong> live health checks.<br><strong>Wear leveling:</strong> distribute writes across SSDs.<br><strong>Intelligent prediction:</strong> predict disk failure before it happens (DME IQ / intelligent O&M)."},
+
+  {cat:"Reliability", src:"V1", q:"Which features provide service availability during upgrade on Dorado?",
+   a:"<strong>Fast upgrade</strong> + <strong>Continuous Mirroring</strong> + <strong>Switchover within seconds</strong> + <strong>Overload control</strong>. Combined with SmartMatrix redundancy, upgrades are non-disruptive — controllers are upgraded in a rolling fashion with services redirected to other controllers."},
+
+  // ===================== EXTRA / QUICK FACTS (V1) =====================
+  {cat:"Quick Facts", src:"V1", q:"What does NVMe over Fabrics (NoF) do?",
+   a:"Maps NVMe to various physical networks (FC, RoCE, TCP) so the NVMe command set can be used across a fabric, not just on the local PCIe bus. Enables <strong>shared access to high-performance NVMe storage over a network</strong> — foundation of Dorado's NVMe-oF front-end ports and HyperMetro FC NoF FastWrite optimization."},
+
+  {cat:"Quick Facts", src:"V1", q:"What is RoCE?",
+   a:"<strong>Remote Direct Memory Access over Converged Ethernet</strong> — lets one host read/write memory on another without CPU involvement, over standard Ethernet. Used on Dorado for <strong>25/100 Gbit/s NVMe-over-RoCE</strong> front-end and for back-end interconnect, delivering low latency and high bandwidth."},
+
+  {cat:"Quick Facts", src:"V1", q:"What is an eDevLUN in SmartVirtualization?",
+   a:"A LUN created in the <strong>local Dorado storage pool</strong> that represents a reorganized mapping of one or more external (heterogeneous) LUNs. It consumes only metadata space locally — actual service data remains on the heterogeneous array. The host reads/writes the eDevLUN on Dorado, which transparently routes I/O to the external LUN."},
+
+  {cat:"Quick Facts", src:"V1", q:"What is a consistency group in HyperReplication?",
+   a:"A set of <strong>associated remote-replication pairs</strong> managed together. All pairs are synchronized and switched over as one unit — critical for applications whose data spans multiple LUNs (e.g., databases with separate data/log LUNs) where write ordering must be preserved across all LUNs."},
+
+  {cat:"Quick Facts", src:"V1", q:"What does 'symmetric active-active' mean and why does it matter for HyperMetro?",
+   a:"Both storage systems serve <strong>read AND write</strong> I/O for the same LUN/FS simultaneously — neither is passive. This maximises resource utilization (no idle DR array), eliminates failover time (both sides already live), and simplifies application deployment (any host at any site uses its local array). Contrast with active-passive DR where the secondary is idle until failover."},
+
+  {cat:"Quick Facts", src:"V1", q:"What is the default RAID level inside a Dorado SSD (intra-disk redundancy)?",
+   a:"<strong>RAID 4</strong> at the die level — protects against bad blocks and die failures within a single SSD, complementing external RAID-TP across disks."},
+
+  {cat:"Quick Facts", src:"V1", q:"What is ROW full-stripe write and why does Dorado use it?",
+   a:"<strong>Redirect-On-Write full-stripe write</strong> — new data is written to fresh locations as a full RAID stripe, avoiding read-modify-write penalties and reducing SSD write amplification. Key FlashLink optimization that extends SSD endurance and improves write performance."},
+];
+
+// ============ APP STATE ============
+const STORAGE_KEY = "h25621_flashcards_v1";
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+if(!state.ratings) state.ratings = {};   // id -> "again"|"hard"|"good"
+if(!state.filter) state.filter = "ALL";
+if(!state.onlyUnmastered) state.onlyUnmastered = false;
+
+let order = [];  // indices into CARDS, filtered
+let cur = 0;
+let flipped = false;
+
+function cardId(i){ return CARDS[i].cat + "::" + CARDS[i].q.slice(0,40); }
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function buildFilters(){
+  const byCat = {};
+  CARDS.forEach((c,i)=>{ byCat[c.cat] = (byCat[c.cat]||0)+1; });
+  const cats = Object.keys(byCat).sort((a,b)=> byCat[b]-byCat[a]);
+  const root = document.getElementById("filters");
+  root.innerHTML = "";
+  const mkChip = (label, val, count) => {
+    const c = document.createElement("span");
+    c.className = "chip" + (state.filter===val?" active":"");
+    c.innerHTML = label + (count!==undefined?`<span class="count">${count}</span>`:"");
+    c.onclick = () => { state.filter = val; save(); rebuild(); };
+    return c;
+  };
+  root.appendChild(mkChip("All", "ALL", CARDS.length));
+  root.appendChild(mkChip("V1 only", "V1", CARDS.filter(c=>c.src==="V1").length));
+  root.appendChild(mkChip("V3 only", "V3", CARDS.filter(c=>c.src==="V3").length));
+  cats.forEach(cat => root.appendChild(mkChip(cat, "CAT:"+cat, byCat[cat])));
+}
+
+function rebuild(){
+  // apply filter
+  order = CARDS.map((_,i)=>i).filter(i=>{
+    const c = CARDS[i];
+    if(state.filter==="ALL") {}
+    else if(state.filter==="V1") { if(c.src!=="V1") return false; }
+    else if(state.filter==="V3") { if(c.src!=="V3") return false; }
+    else if(state.filter.startsWith("CAT:")) { if(c.cat !== state.filter.slice(4)) return false; }
+    if(state.onlyUnmastered && state.ratings[cardId(i)]==="good") return false;
+    return true;
+  });
+  if(order.length===0){
+    // fallback: show all
+    order = CARDS.map((_,i)=>i);
+  }
+  cur = 0;
+  flipped = false;
+  buildFilters();
+  render();
+  updateStats();
+}
+
+function render(){
+  const card = document.getElementById("card");
+  if(order.length===0) return;
+  const i = order[cur];
+  const c = CARDS[i];
+  document.getElementById("q").innerHTML = c.q;
+  document.getElementById("a").innerHTML = c.a;
+  const tagClass = c.src==="V3" ? "tag v3" : "tag";
+  const label = c.src==="V3" ? `V3 · ${c.cat}` : `V1 · ${c.cat}`;
+  document.getElementById("m-cat-f").className = tagClass;
+  document.getElementById("m-cat-b").className = tagClass;
+  document.getElementById("m-cat-f").textContent = label;
+  document.getElementById("m-cat-b").textContent = label;
+  const rating = state.ratings[cardId(i)];
+  const ratingTxt = rating ? ` · ${rating.toUpperCase()}` : "";
+  document.getElementById("m-id-f").textContent = `#${i+1}${ratingTxt}`;
+  document.getElementById("m-id-b").textContent = `#${i+1}${ratingTxt}`;
+  card.classList.toggle("flipped", flipped);
+  document.getElementById("p-cur").textContent = cur+1;
+  document.getElementById("p-tot").textContent = order.length;
+  document.getElementById("p-fill").style.width = ((cur+1)/order.length*100)+"%";
+  document.getElementById("prev").disabled = cur===0;
+  document.getElementById("next").disabled = cur===order.length-1;
+}
+
+function updateStats(){
+  document.getElementById("s-total").textContent = CARDS.length;
+  const rated = Object.keys(state.ratings).length;
+  const good = Object.values(state.ratings).filter(r=>r==="good").length;
+  const hard = Object.values(state.ratings).filter(r=>r==="hard"||r==="again").length;
+  document.getElementById("s-seen").textContent = rated;
+  document.getElementById("s-good").textContent = good;
+  document.getElementById("s-hard").textContent = hard;
+}
+
+function flip(){ flipped = !flipped; render(); }
+function next(){ if(cur<order.length-1){cur++;flipped=false;render();} }
+function prev(){ if(cur>0){cur--;flipped=false;render();} }
+function shuffle(){
+  for(let i=order.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [order[i],order[j]]=[order[j],order[i]];
+  }
+  cur = 0; flipped = false; render();
+}
+function rate(r){
+  const i = order[cur];
+  state.ratings[cardId(i)] = r;
+  save(); updateStats();
+  // auto-advance
+  setTimeout(()=>{ if(cur<order.length-1) next(); else render(); }, 180);
+}
+
+// ============ EVENTS ============
+document.getElementById("card").onclick = flip;
+document.getElementById("prev").onclick = prev;
+document.getElementById("next").onclick = next;
+document.getElementById("btn-shuffle").onclick = shuffle;
+document.getElementById("btn-reset-order").onclick = rebuild;
+document.getElementById("btn-only-unknown").onclick = () => {
+  state.onlyUnmastered = !state.onlyUnmastered; save();
+  document.getElementById("btn-only-unknown").textContent =
+    state.onlyUnmastered ? "Show All Cards" : "Show Unmastered Only";
+  rebuild();
+};
+document.getElementById("btn-reset-progress").onclick = () => {
+  if(confirm("Reset all progress and ratings?")){
+    state.ratings = {}; save(); updateStats(); render();
+  }
+};
+document.querySelectorAll(".rate-btn").forEach(b=>{
+  b.onclick = (e)=>{ e.stopPropagation(); rate(b.dataset.rate); };
+});
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowLeft") prev();
+  else if(e.key==="ArrowRight") next();
+  else if(e.key===" "){ e.preventDefault(); flip(); }
+  else if(e.key==="1") rate("again");
+  else if(e.key==="2") rate("hard");
+  else if(e.key==="3") rate("good");
+});
+
+// init
+rebuild();
+document.getElementById("btn-only-unknown").textContent =
+  state.onlyUnmastered ? "Show All Cards" : "Show Unmastered Only";
+</script>
+</body>
+</html>
