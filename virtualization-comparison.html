@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtualization Platform Comparison — Hybrid Cloud & Modern Apps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface2: #f1f5f9;
+  --surface3: #e2e8f0;
+  --border: #e2e8f0;
+  --border2: #cbd5e1;
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #94a3b8;
+  --b5-bg: #dcfce7; --b5-tx: #14532d; --b5-bdr: #86efac;
+  --b4-bg: #dbeafe; --b4-tx: #1e3a8a; --b4-bdr: #93c5fd;
+  --b3-bg: #fef9c3; --b3-tx: #713f12; --b3-bdr: #fde047;
+  --b2-bg: transparent; --b2-tx: #c2410c; --b2-bdr: #fb923c;
+  --b1-bg: #fee2e2; --b1-tx: #7f1d1d; --b1-bdr: #fca5a5;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --font: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --surface3: #30363d;
+    --border: #30363d;
+    --border2: #484f58;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --b5-bg: #052e16; --b5-tx: #86efac; --b5-bdr: #166534;
+    --b4-bg: #0c1a3d; --b4-tx: #93c5fd; --b4-bdr: #1d4ed8;
+    --b3-bg: #2d1e00; --b3-tx: #fde047; --b3-bdr: #854d0e;
+    --b2-bg: transparent; --b2-tx: #fb923c; --b2-bdr: #c2410c;
+    --b1-bg: #2d0000; --b1-tx: #fca5a5; --b1-bdr: #991b1b;
+    --shadow: 0 1px 3px rgba(0,0,0,.4);
+  }
+}
+[data-theme="dark"] {
+  --bg: #0d1117; --surface: #161b22; --surface2: #21262d; --surface3: #30363d;
+  --border: #30363d; --border2: #484f58; --text: #e6edf3; --text2: #8b949e; --text3: #6e7681;
+  --b5-bg: #052e16; --b5-tx: #86efac; --b5-bdr: #166534;
+  --b4-bg: #0c1a3d; --b4-tx: #93c5fd; --b4-bdr: #1d4ed8;
+  --b3-bg: #2d1e00; --b3-tx: #fde047; --b3-bdr: #854d0e;
+  --b2-bg: transparent; --b2-tx: #fb923c; --b2-bdr: #c2410c;
+  --b1-bg: #2d0000; --b1-tx: #fca5a5; --b1-bdr: #991b1b;
+  --shadow: 0 1px 3px rgba(0,0,0,.4);
+}
+[data-theme="light"] {
+  --bg: #f8fafc; --surface: #ffffff; --surface2: #f1f5f9; --surface3: #e2e8f0;
+  --border: #e2e8f0; --border2: #cbd5e1; --text: #0f172a; --text2: #475569; --text3: #94a3b8;
+  --b5-bg: #dcfce7; --b5-tx: #14532d; --b5-bdr: #86efac;
+  --b4-bg: #dbeafe; --b4-tx: #1e3a8a; --b4-bdr: #93c5fd;
+  --b3-bg: #fef9c3; --b3-tx: #713f12; --b3-bdr: #fde047;
+  --b2-bg: transparent; --b2-tx: #c2410c; --b2-bdr: #fb923c;
+  --b1-bg: #fee2e2; --b1-tx: #7f1d1d; --b1-bdr: #fca5a5;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+a { color: inherit; }
+
+/* ── Layout ── */
+.page { max-width: 1280px; margin: 0 auto; padding: 24px 20px 60px; }
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.header-left {}
+.badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.chip {
+  font-size: 11px;
+  font-family: var(--mono);
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  background: var(--surface2);
+}
+.chip.green { border-color: var(--b5-bdr); color: var(--b5-tx); background: var(--b5-bg); }
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+}
+.subtitle {
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 6px;
+  max-width: 640px;
+}
+.header-right { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.btn-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2);
+  font-size: 16px;
+  transition: background 0.15s;
+}
+.btn-icon:hover { background: var(--surface2); }
+
+/* ── Score cards ── */
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+@media (max-width: 900px) { .score-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 540px) { .score-grid { grid-template-columns: repeat(2, 1fr); } }
+.score-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 10px 8px;
+  transition: box-shadow 0.15s;
+  cursor: default;
+}
+.score-card:hover { box-shadow: var(--shadow); }
+.sc-top { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.sc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.sc-name { font-size: 11px; font-weight: 500; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc-score { font-size: 20px; font-weight: 600; color: var(--text); font-family: var(--mono); }
+.sc-max { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+.sc-bar { height: 3px; background: var(--surface3); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+.sc-fill { height: 3px; border-radius: 2px; transition: width 0.6s ease; }
+
+/* ── Controls bar ── */
+.controls { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.filter-group { display: flex; gap: 4px; flex-wrap: wrap; }
+.fb {
+  font-size: 12px;
+  font-family: var(--font);
+  font-weight: 400;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  cursor: pointer;
+  color: var(--text2);
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+.fb:hover { background: var(--surface2); color: var(--text); }
+.fb.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+.divider { width: 1px; height: 24px; background: var(--border2); flex-shrink: 0; }
+.search-wrap { position: relative; }
+.search-wrap svg { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; }
+#searchInput {
+  font-size: 12px;
+  font-family: var(--font);
+  padding: 5px 10px 5px 30px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+  width: 180px;
+  transition: border-color 0.15s;
+}
+#searchInput:focus { border-color: var(--text); }
+#searchInput::placeholder { color: var(--text3); }
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  font-size: 11px;
+  color: var(--text3);
+}
+.legend-label { font-size: 11px; color: var(--text2); font-weight: 500; }
+.lbadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--mono);
+  border: 1px solid;
+  margin-right: 3px;
+}
+.lbadge.b5 { background: var(--b5-bg); color: var(--b5-tx); border-color: var(--b5-bdr); }
+.lbadge.b4 { background: var(--b4-bg); color: var(--b4-tx); border-color: var(--b4-bdr); }
+.lbadge.b3 { background: var(--b3-bg); color: var(--b3-tx); border-color: var(--b3-bdr); }
+.lbadge.b2 { background: var(--b2-bg); color: var(--b2-tx); border-color: var(--b2-bdr); }
+.lbadge.b1 { background: var(--b1-bg); color: var(--b1-tx); border-color: var(--b1-bdr); }
+
+/* ── Table ── */
+.tbl-outer {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.tbl-scroll { overflow-x: auto; max-height: 600px; overflow-y: auto; }
+table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+  background: var(--surface);
+}
+thead th {
+  background: var(--surface2);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-weight: 500;
+  padding: 10px 8px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+}
+thead th:first-child {
+  text-align: left;
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  width: 196px;
+  min-width: 196px;
+  padding-left: 14px;
+}
+thead th:last-child { border-right: none; }
+tbody td {
+  padding: 8px 8px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  text-align: center;
+  font-size: 12px;
+  transition: background 0.08s;
+}
+tbody td:first-child {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text2);
+  background: var(--surface);
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  padding-left: 14px;
+  width: 196px;
+  min-width: 196px;
+  border-right: 1px solid var(--border2);
+}
+tbody td:last-child { border-right: none; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--surface2); }
+tbody tr:hover td:first-child { background: var(--surface3); }
+.group-row td {
+  background: var(--surface2) !important;
+  padding: 5px 14px;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  border-right: none !important;
+}
+.group-row:hover td { background: var(--surface2) !important; }
+.cat-row.hidden { display: none; }
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--mono);
+  cursor: pointer;
+  border: 1px solid;
+  transition: transform 0.1s, opacity 0.1s;
+  user-select: none;
+}
+.badge:hover { transform: scale(1.12); opacity: 0.85; }
+.badge:active { transform: scale(0.96); }
+.badge.b5 { background: var(--b5-bg); color: var(--b5-tx); border-color: var(--b5-bdr); }
+.badge.b4 { background: var(--b4-bg); color: var(--b4-tx); border-color: var(--b4-bdr); }
+.badge.b3 { background: var(--b3-bg); color: var(--b3-tx); border-color: var(--b3-bdr); }
+.badge.b2 { background: var(--b2-bg); color: var(--b2-tx); border-color: var(--b2-bdr); }
+.badge.b1 { background: var(--b1-bg); color: var(--b1-tx); border-color: var(--b1-bdr); }
+
+/* ── Product header ── */
+.p-head { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 88px; padding: 2px 0; }
+.p-dot { width: 8px; height: 8px; border-radius: 50%; }
+.p-name { font-size: 11px; font-weight: 600; color: var(--text); }
+.p-score { font-size: 10px; color: var(--text3); font-family: var(--mono); }
+
+/* ── Detail panel ── */
+.detail {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-top: 14px;
+  background: var(--surface);
+  overflow: hidden;
+  display: none;
+  box-shadow: var(--shadow);
+}
+.detail.visible { display: block; }
+.detail-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.d-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: var(--mono);
+  border: 1px solid;
+  flex-shrink: 0;
+}
+.detail-meta { flex: 1; }
+.detail-meta h3 { font-size: 13px; font-weight: 600; color: var(--text); }
+.detail-meta p { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.detail-close {
+  font-size: 11px;
+  color: var(--text2);
+  cursor: pointer;
+  padding: 5px 12px;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  background: transparent;
+  font-family: var(--font);
+  transition: background 0.12s;
+}
+.detail-close:hover { background: var(--surface3); }
+.detail-body {
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+.detail-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.dtag {
+  font-size: 10px;
+  font-family: var(--mono);
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  color: var(--text3);
+  background: var(--surface2);
+}
+
+/* ── Footer ── */
+.footer {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.footer p { font-size: 11px; color: var(--text3); }
+.footer a { color: var(--text2); text-decoration: underline; text-underline-offset: 2px; }
+.rating-scale { display: flex; gap: 8px; align-items: center; font-size: 11px; color: var(--text3); }
+
+/* ── Utility ── */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+.no-results { padding: 40px; text-align: center; color: var(--text3); font-size: 13px; }
+</style>
+</head>
+
+<body>
+<div class="page">
+
+  <h2 class="sr-only">Virtualization platform comparison across 20 categories for hybrid cloud and modern applications, covering Nutanix, Sangfor, VMware, Red Hat, Oracle, Proxmox, and Sardina.</h2>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="badge-row">
+        <span class="chip green">v1.0</span>
+        <span class="chip">7 platforms</span>
+        <span class="chip">20 categories</span>
+        <span class="chip">Hybrid Cloud + Modern Apps</span>
+      </div>
+      <h1>Virtualization Platform Comparison</h1>
+      <p class="subtitle">Enterprise evaluation matrix — Sangfor HCI, Nutanix, VMware, Red Hat, Oracle VM, Proxmox, dan Sardina FishOS dalam konteks hybrid cloud dan modern application. Klik rating untuk detail analisis per platform.</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-icon" id="themeToggle" title="Toggle theme" aria-label="Toggle dark/light mode">
+        <svg id="iconSun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="iconMoon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Score cards -->
+  <div class="score-grid" id="scoreGrid"></div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="filter-group" id="filterGroup">
+      <button class="fb on" data-grp="all">All (20)</button>
+      <button class="fb" data-grp="infra">Infrastructure (6)</button>
+      <button class="fb" data-grp="ops">Operations (5)</button>
+      <button class="fb" data-grp="biz">Commercial (5)</button>
+      <button class="fb" data-grp="mkt">Market fit (4)</button>
+    </div>
+    <div class="divider"></div>
+    <div class="search-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Cari kategori..." aria-label="Search categories">
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-label">Rating:</span>
+    <span><span class="lbadge b5">5</span>Excellent</span>
+    <span><span class="lbadge b4">4</span>Good</span>
+    <span><span class="lbadge b3">3</span>Fair</span>
+    <span><span class="lbadge b2">2</span>Limited</span>
+    <span><span class="lbadge b1">1</span>Weak</span>
+    <span style="margin-left:6px;color:var(--text3);font-size:10px">— Klik angka untuk detail analisis</span>
+  </div>
+
+  <!-- Table -->
+  <div class="tbl-outer">
+    <div class="tbl-scroll">
+      <table id="mainTable" role="table" aria-label="Virtualization platform comparison matrix"></table>
+    </div>
+  </div>
+
+  <!-- Detail panel -->
+  <div class="detail" id="detailPanel" role="region" aria-label="Category detail">
+    <div class="detail-head">
+      <div class="d-badge" id="dBadge"></div>
+      <div class="detail-meta">
+        <h3 id="dTitle"></h3>
+        <p id="dSub"></p>
+      </div>
+      <button class="detail-close" onclick="closeDetail()" aria-label="Close detail">tutup ✕</button>
+    </div>
+    <div class="detail-body" id="dBody"></div>
+    <div class="detail-tags" id="dTags"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>Disusun untuk kebutuhan presales enablement &amp; sales discovery — PT Packet Systems Indonesia (Logicalis). Data berdasarkan evaluasi teknis dan komersial per Q2 2025.</p>
+    <div class="rating-scale">
+      <span>1 = Weak &nbsp;·&nbsp; 2 = Limited &nbsp;·&nbsp; 3 = Fair &nbsp;·&nbsp; 4 = Good &nbsp;·&nbsp; 5 = Excellent &nbsp;·&nbsp; Max score 100</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CATS = [
+  {id:0, name:"Hypervisor technology", grp:"infra", tags:["KVM","ESXi","Xen","hardware compatibility","ISV certification"]},
+  {id:1, name:"Hybrid cloud integration", grp:"infra", tags:["cloud bursting","NC2","VMC","multi-site","unified management"]},
+  {id:2, name:"Kubernetes & containers", grp:"infra", tags:["K8s","CNCF","NKP","OpenShift","container orchestration"]},
+  {id:3, name:"Multi-cloud management", grp:"infra", tags:["cost governance","NCM","Aria","RHACM","chargeback"]},
+  {id:4, name:"Storage architecture", grp:"infra", tags:["erasure coding","vSAN","DSF","Ceph","tiering"]},
+  {id:5, name:"Network virtualization (SDN)", grp:"infra", tags:["micro-segmentation","NSX-T","Flow","OVN","overlay"]},
+  {id:6, name:"Live migration", grp:"ops", tags:["vMotion","AHV migration","zero downtime","cross-host","HA"]},
+  {id:7, name:"High availability & DR", grp:"ops", tags:["SRM","Nutanix Leap","Metro Cluster","RPO","RTO"]},
+  {id:8, name:"Backup & data protection", grp:"ops", tags:["Veeam","Commvault","snapshot","HYCU","OADP"]},
+  {id:9, name:"GPU & AI workloads", grp:"ops", tags:["vGPU","NVIDIA","GPU passthrough","AI/ML","inference"]},
+  {id:10, name:"Security & zero trust", grp:"ops", tags:["micro-segmentation","encryption","ACS","StackRox","Carbon Black"]},
+  {id:11, name:"Scalability", grp:"biz", tags:["node count","cluster size","linear scale","VM density","max nodes"]},
+  {id:12, name:"Licensing model", grp:"biz", tags:["subscription","perpetual","per-core","TCO","Broadcom"]},
+  {id:13, name:"Total cost of ownership", grp:"biz", tags:["3-year TCO","CapEx","OpEx","migration cost","ROI"]},
+  {id:14, name:"Management & UX", grp:"biz", tags:["Prism Central","vCenter","Horizon","admin console","day-2 ops"]},
+  {id:15, name:"API & automation", grp:"biz", tags:["REST API","Terraform","Ansible","GitOps","IaC"]},
+  {id:16, name:"Ecosystem & community", grp:"mkt", tags:["ISV","partners","certifications","community","documentation"]},
+  {id:17, name:"Indonesia local support", grp:"mkt", tags:["local office","partner","Bahasa","NOC","presales"]},
+  {id:18, name:"OJK/BSSN compliance", grp:"mkt", tags:["OJK IT Risk","BSSN","BI regulation","banking","government"]},
+  {id:19, name:"Modern app readiness", grp:"mkt", tags:["microservices","DevOps","GitOps","service mesh","Kubernetes-native"]},
+];
+
+const GRP_LABELS = { infra:"Infrastructure", ops:"Operations", biz:"Commercial", mkt:"Market fit" };
+
+const PRODUCTS = [
+  {name:"Nutanix",   color:"#00A3E0", s:[5,5,5,5,5,4,4,5,4,4,4,4,3,3,5,5,4,4,4,5]},
+  {name:"Sangfor",   color:"#E8431C", s:[3,3,3,2,3,3,3,3,3,2,5,3,5,5,3,2,2,4,3,2]},
+  {name:"VMware",    color:"#717271", s:[5,5,4,5,5,5,5,5,5,5,5,5,1,1,5,5,5,3,5,4]},
+  {name:"Red Hat",   color:"#CC0000", s:[4,4,5,4,4,4,3,3,3,4,5,4,3,3,4,5,5,2,2,5]},
+  {name:"Oracle VM", color:"#F80000", s:[3,3,2,2,3,2,3,3,3,3,3,3,1,1,2,3,2,2,2,2]},
+  {name:"Proxmox",   color:"#E57000", s:[4,1,2,1,3,2,3,2,3,3,2,2,5,5,4,3,4,1,1,2]},
+  {name:"Sardina",   color:"#0066CC", s:[3,4,3,3,4,3,3,3,2,3,3,4,4,4,3,4,2,3,2,3]},
+];
+
+const NOTES = [
+  ["AHV (KVM-based), 20+ years of enterprise iteration, broad hardware compatibility, certified for SAP, Oracle, and major ISVs across banking and government.",
+   "NC2 on AWS, Azure, and GCP — true cloud-native HCI extension with unified management through Prism Central. One of the strongest hybrid cloud stories in the category.",
+   "NKP (Nutanix Kubernetes Platform) — full CNCF-compliant K8s distribution with Calm automation. Strong choice for platform engineering teams in enterprise accounts.",
+   "NCM (Nutanix Cloud Manager) — multi-cloud cost governance, rightsizing, and chargeback across clouds and on-prem. Prism Central as single management plane.",
+   "DSF (Distributed Storage Fabric) with CVM, erasure coding, data locality, NVMe tiering — among the best storage architectures in the HCI category.",
+   "Flow Network Security — VM-level micro-segmentation, VPC isolation, distributed firewall per workload group. Not quite NSX-T depth but solid enterprise baseline.",
+   "AHV live migration with near-zero downtime and no shared storage required between nodes. Competitive with vMotion for most enterprise workloads.",
+   "Metro Cluster, Nutanix Leap DR, async/sync replication options — near-zero RPO achievable. Strong for banking disaster recovery requirements.",
+   "HYCU and Veeam certified integration, native snapshots, Mine with HYCU for backup appliance deployment. One of the better ISV backup stories in HCI.",
+   "NVIDIA vGPU certified, NKP GPU node pools for AI/ML inference workloads. Solid GPU support but roadmap still maturing versus VMware Bitfusion.",
+   "Flow micro-segmentation, data-at-rest encryption, Nutanix Security Central — enterprise-grade security baseline. Well-suited for OJK IT Risk compliance requirements.",
+   "3 to 64 validated nodes per cluster with linear scale-out. Proven at large enterprise banking and government deployments in Indonesia.",
+   "Per-core subscription with bundled SKUs. Improving deal economics versus VMware post-Broadcom, but scoping at deal stage still requires training.",
+   "Mid-to-high upfront investment, but strong 3-year TCO advantage over VMware following Broadcom pricing restructuring. Key presales angle for displacement deals.",
+   "Prism Central — single pane of glass, excellent UX, AI-driven operations recommendations. Best-in-class admin console in the HCI category.",
+   "REST API, Python SDK, Terraform provider, Ansible collection, Calm IaC — comprehensive automation story for DevOps and infrastructure teams.",
+   "Strong ISV ecosystem — Veeam, Commvault, Splunk, ServiceNow all certified. Large global partner network with deep enterprise penetration.",
+   "PT Packet Systems and multiple certified Indonesian partners with active local presales and technical support coverage.",
+   "OJK IT Risk compliant and BSSN-aligned — widely referenced in Indonesian banking deployments including BCA, BRI, and Mandiri tier environments.",
+   "NKP plus Calm app automation enables Kubernetes-native and microservices workloads. Primary modern app platform story for Nutanix deals."],
+
+  ["aSV (KVM-based), maturing rapidly but still limited ISV certifications compared to VMware or Nutanix. Suitable for standard enterprise workloads.",
+   "Cloud Connect capabilities available but no mature equivalent to Nutanix NC2 or VMware VMC on cloud. Significant gap for customers wanting true hybrid cloud.",
+   "Basic container support with K8s roadmap improving, but not yet production-proven as a fully managed Kubernetes platform. Do not lead with this.",
+   "No mature multi-cloud management plane. Major gap versus Nutanix NCM or VMware Aria Suite. Limit HCI positioning to on-prem replacement deals.",
+   "aSAN distributed storage — functional for standard HCI use cases but fewer enterprise tiering and data services options than category leaders.",
+   "SDN with basic micro-segmentation capability — improving but not at NSX-T or Nutanix Flow Network grade. Adequate for mid-market workloads.",
+   "Live migration supported and functional for standard workloads. Not as extensively tested or validated at large-scale enterprise environments.",
+   "Site DR and basic HA supported. Not as mature as Nutanix Leap or VMware SRM for banking-grade, regulated disaster recovery requirements.",
+   "Built-in backup available, Veeam integration possible but ISV backup ecosystem significantly smaller than VMware or Nutanix. Validate before proposing.",
+   "GPU passthrough supported with vGPU roadmap in progress. Limited validated AI/ML workload deployments to date — not a selling point.",
+   "Native SecOps stack integration (XDR, Cyber Command, Neural-X) — Sangfor's unique and most differentiating advantage in this comparison. Lead with this.",
+   "3-node minimum cluster, scalable. But maximum validated cluster size and VM density less documented compared to Nutanix or VMware.",
+   "All-inclusive pricing with simplified SKU structure — the clearest and most aggressive licensing advantage in this category. Key VMware displacement message.",
+   "Lowest TCO in this entire category. Sangfor's primary competitive weapon against VMware post-Broadcom disruption. Use total 3-year cost comparison in every deal.",
+   "HCI Manager console is functional but less polished, less AI-driven, and less feature-rich than Prism Central or Aria Operations. Manage expectations.",
+   "REST API available with Terraform support still in early stages. Overall IaC and automation ecosystem is thin — gap for DevOps-mature customer accounts.",
+   "Smaller ISV and partner ecosystem compared to VMware or Nutanix. Growing in ASEAN and Indonesia but not yet enterprise-wide certified coverage.",
+   "Sangfor Indonesia office present with growing partner network. Bahasa Indonesia support available — important for government and regional enterprise accounts.",
+   "OJK alignment in progress. Fewer certified Indonesian banking deployments and formal compliance references than VMware or Nutanix. Manage carefully in regulated deals.",
+   "Not positioned as a modern application platform. SecOps integration is the primary value proposition. Do not lead with containers or K8s in Sangfor deals."],
+
+  ["ESXi — industry gold standard for 20+ years, broadest hardware compatibility list, most enterprise workloads certified. The reference platform for everything else.",
+   "VMware Cloud Foundation (VCF), VMC on AWS/Azure/GCP — most mature and complete hybrid cloud platform in the category. Strongest technical hybrid story.",
+   "vSphere with Tanzu — Kubernetes on VMs and bare metal. Technically solid but license-heavy and complex to operate. Tanzu adoption has been slower than VMware hoped.",
+   "vRealize/Aria Suite — most comprehensive multi-cloud management, cost governance, and operations automation in any platform. Gold standard for large enterprises.",
+   "vSAN with RAID-5/6 erasure coding, VVOL, policy-based management — best-in-class HCI storage architecture. Proven at petabyte scale globally.",
+   "NSX-T — the gold standard enterprise SDN: distributed firewall, full micro-segmentation L4-L7, service insertion. No other platform matches this depth.",
+   "vMotion — industry gold standard for 15+ years: zero downtime live migration, proven at massive scale. Still the benchmark everything else is compared to.",
+   "Site Recovery Manager, vSphere HA, stretched cluster — most mature and turnkey DR orchestration available. Trusted in regulated banking environments globally.",
+   "Best backup ISV ecosystem globally: Veeam, Commvault, Zerto all primary-certified and deeply integrated with VMware APIs. No other platform matches this.",
+   "NVIDIA vGPU fully certified, Bitfusion GPU pooling — most mature and validated GPU virtualization platform. Best choice for mixed VDI and AI workloads.",
+   "NSX plus Carbon Black integration, vSphere Trust Authority — enterprise security gold standard. Most audited and compliance-validated platform in the category.",
+   "Proven at 96-node clusters and 10,000+ VM environments globally. No practical scale ceiling for any enterprise workload at any Indonesian account.",
+   "Broadcom forced subscription bundles, VCF all-or-nothing SKUs — most disruptive licensing restructuring in enterprise software history. THE reason customers are leaving.",
+   "Highest TCO post-Broadcom acquisition. Price increases of 200-400% reported by customers. This is the PRIMARY reason accounts are evaluating alternatives right now.",
+   "vCenter plus Aria Operations — mature and extremely feature-rich admin experience. Complexity grows significantly at scale but tooling is unmatched.",
+   "Terraform VMware provider, Ansible, NSX API, PowerCLI — richest automation and IaC ecosystem in the virtualization category. No platform comes close.",
+   "Largest ecosystem in virtualization: thousands of ISV certifications, deepest global partner network, most documentation, most community knowledge.",
+   "Strong Indonesian partner ecosystem historically. Broadcom's channel restructuring in 2024 disrupted many local partner relationships and support commitments.",
+   "Longest OJK, BI, and BSSN compliance track record in Indonesia. Most banking and government RFPs still reference VMware as baseline. Compliance inertia is real.",
+   "Tanzu platform for microservices — technically capable. License complexity reduces actual adoption rates. Customers who want modern apps lean toward Red Hat or NKP."],
+
+  ["KVM/libvirt via OpenShift Virtualization — enterprise KVM with full Red Hat support. Replacing legacy oVirt/RHV as the VM platform within the OpenShift ecosystem.",
+   "OpenShift deployable on any cloud (AWS, Azure, GCP, OCI) with strong hybrid cluster management via RHACM. True any-cloud portability is a genuine strength.",
+   "OpenShift — arguably the most mature and feature-complete enterprise Kubernetes platform on the market. Strongest K8s story in this comparison by a wide margin.",
+   "RHACM (Red Hat Advanced Cluster Management) — multi-cluster K8s governance and policy enforcement at cloud scale. Best multi-cluster management tool available.",
+   "ODF (OpenShift Data Foundation, which is Ceph) — enterprise-grade distributed storage. Powerful but operationally complex and requires Ceph expertise to manage well.",
+   "OVN-Kubernetes and Multus CNI — excellent for Kubernetes pod networking and multi-attach. Less polished for traditional VM SDN use cases versus NSX-T.",
+   "KVM live migration via OpenShift Virtualization — functional but less seamless UX than vMotion or AHV migration. Suitable for non-performance-critical migrations.",
+   "Regional DR via ACM policies — not as turnkey or wizard-driven as VMware SRM or Nutanix Leap. Requires more engineering skill to configure and validate.",
+   "OADP and Velero integration — functional for Kubernetes workload backup. Not enterprise-polished for VM backup. Veeam does support OpenShift but less natively.",
+   "NVIDIA GPU Operator on OpenShift — strong for AI/ML container workloads and multi-tenant GPU sharing. Good fit for data science platform use cases.",
+   "ACS (StackRox), SELinux, Security Context Constraints — security-first platform, best-in-class for Kubernetes workload security. Strong for DevSecOps customers.",
+   "Cloud-scale Kubernetes clusters proven at scale. VM workload scale is bounded by KVM host capacity. Good for medium to large enterprise deployments.",
+   "Red Hat subscription per socket or per node, annual renewal — predictable but not cheap. Better than VMware post-Broadcom but pricier than Nutanix for pure HCI.",
+   "Medium TCO. Open source base reduces licensing cost but expertise, support subscriptions, and training costs add up significantly in year 1-2.",
+   "OpenShift Console — well designed for Kubernetes administrators. Steep learning curve for traditional VM-centric IT operations teams. Expect re-skilling investment.",
+   "Operator Framework, GitOps/ArgoCD native, Tekton CI/CD — best-in-class IaC and DevOps toolchain for Kubernetes environments. Strongest automation story for DevOps teams.",
+   "Massive global open source community, Red Hat and IBM partner network. VM-centric ISV certifications (Veeam, Commvault backup for VMs) are weaker than VMware.",
+   "Limited Red Hat certified implementation partners in Indonesia. Minimal Bahasa Indonesia documentation or local training programs available today.",
+   "Not widely validated for OJK/BSSN compliance in Indonesia. Relatively new in the Indonesian regulated market — compliance gap needs to be addressed in regulated deals.",
+   "Primary platform strength. Modern app first; VM support in OpenShift Virtualization is a migration bridge, not core identity. Best pick for pure modern app platform RFPs."],
+
+  ["Oracle VM (Xen-based) or Oracle Linux KVM — functional hypervisor but heavily optimized and validated only for Oracle Database and Oracle Fusion middleware workloads.",
+   "Tightly coupled to Oracle Cloud Infrastructure (OCI). Poor hybrid fit for AWS or Azure environments. Oracle's strategy is to use on-prem virtualization to pull customers into OCI.",
+   "Oracle Container Engine (OKE) exists on OCI only. No viable or supported on-prem Kubernetes platform. Do not position Oracle VM for customers wanting modern app platforms.",
+   "OCI-centric management exclusively. Not a multi-cloud platform. Creates deep proprietary infrastructure lock-in that is very expensive to escape.",
+   "OCFS2 and Oracle ASM — highly optimized for Oracle Database. Poor fit for general enterprise workloads, non-Oracle applications, or storage-sharing use cases.",
+   "Basic SDN within OCI. No enterprise-grade on-prem SDN platform. No equivalent to NSX-T, Nutanix Flow, or even OVN-Kubernetes for on-premises deployments.",
+   "Oracle VM live migration supported and functional for Oracle workloads. Not tested, validated, or positioned for general enterprise VM mobility use cases.",
+   "Oracle Data Guard — excellent for Oracle Database HA and DR. Very limited general-purpose VM disaster recovery story for non-Oracle workload environments.",
+   "RMAN and Oracle-native backup — strong for Oracle Database workloads. Very limited ISV backup ecosystem for non-Oracle applications running on Oracle VM.",
+   "OCI GPU bare metal instances are excellent for AI workloads on OCI. On-prem GPU virtualization story is very limited and not a strength of Oracle VM platform.",
+   "Oracle Key Vault and Database Vault — strong security controls for Oracle Database stack. Security model weakens significantly for non-Oracle platform workloads.",
+   "Reasonable VM density for Oracle workloads. Not designed or sized for general-purpose VM density or large diverse enterprise workload consolidation.",
+   "Oracle licensing is notoriously complex, processor-factor-based, very expensive, and carries high audit exposure risk. Hard processor partitioning rules apply. Avoid if possible.",
+   "Highest TCO risk in this entire comparison. Oracle Database licensing costs dominate and escalate the total bill rapidly. The real cost is usually hidden until audit time.",
+   "Oracle Cloud Manager and Oracle Enterprise Manager — complex and dated UIs that require Oracle-specialist staff to operate. Not suitable for generalist IT operations teams.",
+   "Terraform OCI provider is good for OCI-based deployments. Limited automation tooling for on-premises Oracle VM environments. PowerCLI equivalent does not exist.",
+   "Oracle-focused ecosystem. Poor ISV support for non-Oracle workloads. Limited general enterprise certifications from backup, monitoring, or security vendors.",
+   "Oracle Indonesia office focuses mainly on database and ERP licensing. Limited virtualization-specific presales or post-sales support engagement for HCI use cases.",
+   "Oracle Database deployments exist in large Indonesian banks. No documented Oracle VM HCI compliance reference cases for OJK/BSSN banking regulation requirements.",
+   "Very poor modern app positioning. OKE is OCI-locked. No viable on-prem container or Kubernetes platform for enterprise DevOps or microservices architecture teams."],
+
+  ["KVM plus LXC containers — excellent open source hypervisor, actively maintained by Proxmox Server Solutions, expanding hardware compatibility with each release.",
+   "No native hybrid cloud integration exists. Community plugins are available but not suitable for enterprise production hybrid cloud use. Not a hybrid cloud platform.",
+   "No native managed Kubernetes distribution. Rancher or k3s can be deployed on top as separate layers but no integrated, supported K8s management plane exists.",
+   "No native multi-cloud management. Proxmox manages Proxmox VE clusters only. No abstraction or management capability beyond the Proxmox cluster boundary.",
+   "Native ZFS integration and optional Ceph cluster support — good enterprise-grade storage options for the price point. Ceph adds complexity but enables scale.",
+   "Linux Bridge and Open vSwitch — basic network switching and VLAN support. No enterprise micro-segmentation framework or zero-trust networking controls.",
+   "KVM live migration fully supported within a Proxmox cluster — works reliably. No built-in or supported cross-site or cross-datacenter live migration capability.",
+   "Proxmox HA Manager with 3-node cluster quorum — basic VM high availability. No dedicated DR product or wizard-driven failover orchestration like SRM or Leap.",
+   "Proxmox Backup Server is a solid native backup tool for Proxmox environments. Veeam does NOT support Proxmox — this is a significant gap in enterprise accounts.",
+   "PCIe GPU passthrough is well-supported and reliable. vGPU sharing requires unofficial community workarounds — not suitable for regulated enterprise GPU use cases.",
+   "Basic iptables/nftables firewall included. No enterprise micro-segmentation, no zero-trust framework, no RBAC-driven network security controls built in.",
+   "Small to medium cluster sizes are practical in production, typically 3 to 50 nodes. No proven hyperscale or very large enterprise deployment references globally.",
+   "Free community edition or paid support subscription from Proxmox Server Solutions — the most flexible and cost-efficient licensing model in this entire comparison.",
+   "Lowest licensing TCO in this category by a significant margin. Very compelling for cost-sensitive, SMB, and mid-market deployments without strict compliance needs.",
+   "Clean and intuitive Proxmox web UI — good simplicity and low barrier for administrators. Missing AI ops, deep RBAC, policy automation, and enterprise observability.",
+   "REST API is well-documented and reliable. Community-maintained Terraform provider available. Automation ecosystem is community-driven, not vendor-supported.",
+   "Active global open source community with helpful forums and documentation. Limited formal ISV certifications or enterprise vendor SLA support agreements.",
+   "Community support only available in Indonesia. No Proxmox vendor office, no certified enterprise implementation partners with formal SLA commitments.",
+   "Not OJK-certified and not BSSN-validated. This is a hard blocker for banking and government deployments in Indonesia that require formal regulatory compliance.",
+   "LXC containers supported for lightweight workloads. No managed Kubernetes story. Not positioned or capable as an enterprise modern application delivery platform."],
+
+  ["KVM via OpenStack Nova — proven open-source hypervisor with the OpenStack cloud platform providing management, networking, and storage orchestration layers.",
+   "OpenStack-based private and hybrid cloud with multi-site Neutron networking. Reasonable hybrid cloud story, especially for telco and cloud service provider environments.",
+   "Kubernetes via OpenStack Magnum or externally integrated K8s clusters. Works as a deployment mechanism but not a native managed Kubernetes platform experience.",
+   "OpenStack API compatibility layer provides some multi-cloud abstraction. Not as seamless or feature-complete as Nutanix NCM or VMware Aria for enterprise accounts.",
+   "Ceph distributed storage via OpenStack Cinder and Manila — enterprise-grade, proven at telco and cloud scale. Operationally complex but powerful at large scale.",
+   "Neutron plus OVN networking — reasonable SDN baseline with security group micro-segmentation. Functional but requires manual tuning; not as policy-driven as NSX-T.",
+   "OpenStack Nova live migration — proven at cloud and telco scale. Less seamless user experience and less wizard-driven than vCenter vMotion or Prism Central migration.",
+   "OpenStack HA with active-active controller nodes and multi-site support — good distributed architecture but high operational complexity to configure and maintain.",
+   "Limited native backup tooling in base OpenStack. Relies on third-party solutions or custom Cinder snapshot and export workflows for enterprise backup requirements.",
+   "GPU passthrough via Nova — functional and supported. vGPU options in OpenStack are limited and less validated than NVIDIA vGPU on VMware or Nutanix NKP.",
+   "OpenStack Keystone (identity), Barbican (secrets management), security groups — reasonable baseline security. No integrated zero-trust framework out of the box.",
+   "Designed and proven for cloud-provider scale — thousands of VMs across many physical nodes. Suitable for service provider and large enterprise cloud deployments.",
+   "Commercial OpenStack distribution with transparent subscription pricing — a better licensing model than Oracle or VMware/Broadcom. Sardina adds support and services.",
+   "Good TCO for large-scale private cloud deployments. Open source foundation reduces software costs; commercial Sardina support adds predictability and accountability.",
+   "OpenStack Horizon dashboard plus Sardina custom management UI — functional interface but steeper learning curve than Prism Central or vCenter for traditional IT teams.",
+   "OpenStack REST APIs (Nova, Neutron, Cinder, Keystone) plus Terraform OpenStack provider — solid IaC foundation for infrastructure automation and GitOps workflows.",
+   "Global OpenStack community plus Sardina APAC regional focus. Limited Indonesia-specific documentation, local training, or Bahasa Indonesia resources currently.",
+   "Sardina has APAC regional presence with some Indonesia and regional deployments. Growing footprint but not as well-documented as Nutanix or VMware partner coverage.",
+   "OpenStack ASEAN and telco deployments exist. OJK and BSSN compliance track record for Indonesian banking specifically is not yet formally established or referenced.",
+   "OpenStack Heat orchestration, app catalog, and container support provide a DevOps-capable foundation. Good platform for engineering-led teams comfortable with OpenStack."],
+];
+
+const RATING_LABELS = ["","Weak","Limited","Fair","Good","Excellent"];
+
+function bClass(v) { return v===5?"b5":v===4?"b4":v===3?"b3":v===2?"b2":"b1"; }
+
+function buildScores() {
+  const grid = document.getElementById("scoreGrid");
+  PRODUCTS.forEach((p, pi) => {
+    const total = p.s.reduce((a,b) => a+b, 0);
+    const div = document.createElement("div");
+    div.className = "score-card";
+    div.innerHTML = `
+      <div class="sc-top">
+        <span class="sc-dot" style="background:${p.color}"></span>
+        <span class="sc-name">${p.name}</span>
+      </div>
+      <span class="sc-score">${total}</span><span class="sc-max">/100</span>
+      <div class="sc-bar"><div class="sc-fill" style="width:${total}%;background:${p.color}"></div></div>`;
+    grid.appendChild(div);
+  });
+}
+
+function buildTable(grp, search) {
+  const tbl = document.getElementById("mainTable");
+  tbl.innerHTML = "";
+
+  const thead = document.createElement("thead");
+  let hHTML = "<tr><th scope='col'>Category</th>";
+  PRODUCTS.forEach(p => {
+    const total = p.s.reduce((a,b) => a+b, 0);
+    hHTML += `<th scope="col"><div class="p-head">
+      <span class="p-dot" style="background:${p.color}"></span>
+      <span class="p-name">${p.name}</span>
+      <span class="p-score">${total}/100</span>
+    </div></th>`;
+  });
+  hHTML += "</tr>";
+  thead.innerHTML = hHTML;
+  tbl.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  let lastGrp = "", anyVisible = false;
+
+  CATS.forEach((cat, ci) => {
+    const grpMatch = grp === "all" || cat.grp === grp;
+    const searchMatch = !search || cat.name.toLowerCase().includes(search.toLowerCase());
+    const visible = grpMatch && searchMatch;
+
+    if (cat.grp !== lastGrp) {
+      const gTr = document.createElement("tr");
+      gTr.className = "group-row" + (visible ? "" : " hidden");
+      gTr.dataset.grp = cat.grp;
+      gTr.innerHTML = `<td colspan="${PRODUCTS.length + 1}">${GRP_LABELS[cat.grp]}</td>`;
+      tbody.appendChild(gTr);
+      lastGrp = cat.grp;
+    }
+
+    const tr = document.createElement("tr");
+    tr.className = "cat-row" + (visible ? "" : " hidden");
+    tr.dataset.grp = cat.grp;
+    if (visible) anyVisible = true;
+
+    let rHTML = `<td>${cat.name}</td>`;
+    PRODUCTS.forEach((p, pi) => {
+      const v = p.s[ci];
+      rHTML += `<td><span class="badge ${bClass(v)}" data-ci="${ci}" data-pi="${pi}" role="button" tabindex="0" aria-label="${p.name} ${cat.name}: ${RATING_LABELS[v]} (${v}/5)">${v}</span></td>`;
+    });
+    tr.innerHTML = rHTML;
+    tbody.appendChild(tr);
+  });
+
+  if (!anyVisible) {
+    const emptyTr = document.createElement("tr");
+    emptyTr.innerHTML = `<td colspan="${PRODUCTS.length + 1}" class="no-results">Tidak ada kategori yang cocok dengan pencarian.</td>`;
+    tbody.appendChild(emptyTr);
+  }
+
+  tbl.appendChild(tbody);
+  attachBadgeEvents();
+}
+
+function attachBadgeEvents() {
+  document.querySelectorAll(".badge").forEach(b => {
+    b.addEventListener("click", () => showDetail(parseInt(b.dataset.ci), parseInt(b.dataset.pi)));
+    b.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); showDetail(parseInt(b.dataset.ci), parseInt(b.dataset.pi)); }});
+  });
+}
+
+function showDetail(ci, pi) {
+  const cat = CATS[ci];
+  const prod = PRODUCTS[pi];
+  const v = prod.s[ci];
+  const panel = document.getElementById("detailPanel");
+  const db = document.getElementById("dBadge");
+
+  db.textContent = v;
+  db.className = `d-badge ${bClass(v)}`;
+  document.getElementById("dTitle").textContent = `${prod.name} — ${cat.name}`;
+  document.getElementById("dSub").textContent = `Rating: ${v}/5 — ${RATING_LABELS[v]} | Kelompok: ${GRP_LABELS[cat.grp]}`;
+  document.getElementById("dBody").textContent = NOTES[pi][ci];
+
+  const tagsDiv = document.getElementById("dTags");
+  tagsDiv.innerHTML = cat.tags.map(t => `<span class="dtag">${t}</span>`).join("");
+
+  panel.classList.add("visible");
+  panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function closeDetail() {
+  document.getElementById("detailPanel").classList.remove("visible");
+}
+
+let activeGrp = "all", activeSearch = "";
+
+document.getElementById("filterGroup").querySelectorAll(".fb").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".fb").forEach(b => b.classList.remove("on"));
+    btn.classList.add("on");
+    activeGrp = btn.dataset.grp;
+    buildTable(activeGrp, activeSearch);
+  });
+});
+
+document.getElementById("searchInput").addEventListener("input", e => {
+  activeSearch = e.target.value;
+  buildTable(activeGrp, activeSearch);
+});
+
+const themeBtn = document.getElementById("themeToggle");
+const iconSun = document.getElementById("iconSun");
+const iconMoon = document.getElementById("iconMoon");
+let isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+function applyTheme(dark) {
+  document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+  iconSun.style.display = dark ? "block" : "none";
+  iconMoon.style.display = dark ? "none" : "block";
+  isDark = dark;
+}
+
+themeBtn.addEventListener("click", () => applyTheme(!isDark));
+applyTheme(isDark);
+
+buildScores();
+buildTable("all", "");
+</script>
+</body>
+</html>
