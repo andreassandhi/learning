@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enterprise Storage Vendor Comparison — SMBC Indonesia Tier 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0d1117;
+  --bg2:      #161b22;
+  --bg3:      #1c2128;
+  --bg4:      #21262d;
+  --border:   #30363d;
+  --border2:  #3d444d;
+  --txt:      #e6edf3;
+  --txt2:     #8b949e;
+  --txt3:     #6e7681;
+  --blue:     #388bfd;
+  --blue-bg:  #1f3358;
+  --blue-txt: #79c0ff;
+  --teal:     #2dd4bf;
+  --teal-bg:  #0d2e2e;
+  --teal-txt: #5eead4;
+  --amber:    #e3b341;
+  --amber-bg: #2e2006;
+  --amber-txt:#fbbf24;
+  --red:      #f85149;
+  --red-bg:   #2d1215;
+  --red-txt:  #ffa198;
+  --green:    #3fb950;
+  --green-bg: #0f2d18;
+  --green-txt:#7ee787;
+  --mono:    'IBM Plex Mono', monospace;
+  --sans:    'IBM Plex Sans', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── HEADER ─────────────────────────────────────── */
+.page-header {
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 2rem 2rem;
+  background: var(--bg2);
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal), var(--blue), transparent);
+}
+.header-inner { max-width: 1400px; margin: 0 auto; }
+.header-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: .6rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-tag::before {
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--teal);
+  display: inline-block;
+}
+h1 {
+  font-family: var(--mono);
+  font-size: clamp(1.2rem, 2.5vw, 1.75rem);
+  font-weight: 600;
+  color: var(--txt);
+  letter-spacing: -.02em;
+  line-height: 1.25;
+  margin-bottom: .5rem;
+}
+.header-sub {
+  font-size: 13px;
+  color: var(--txt2);
+  max-width: 640px;
+  margin-bottom: 1.5rem;
+}
+.header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-size: 12px;
+  color: var(--txt3);
+  font-family: var(--mono);
+}
+.meta-item strong { color: var(--txt2); }
+
+/* ── MAIN ────────────────────────────────────────── */
+.main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+
+/* ── SCORE CARDS ─────────────────────────────────── */
+.scores-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--txt3);
+  margin-bottom: .75rem;
+}
+.scores-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+  margin-bottom: 2rem;
+}
+.score-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  transition: border-color .15s;
+}
+.score-card:hover { border-color: var(--border2); }
+.score-card.rank-1 { border-color: var(--teal); }
+.score-card.rank-1 .vendor-short { color: var(--teal); }
+.sc-rank {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--txt3);
+  margin-bottom: 3px;
+}
+.vendor-short {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--txt2);
+  margin-bottom: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sc-score {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--txt);
+  line-height: 1;
+  margin-bottom: 5px;
+}
+.sc-score span { font-size: 11px; font-weight: 400; color: var(--txt3); }
+.sc-bar-bg {
+  height: 2px;
+  background: var(--bg4);
+  border-radius: 1px;
+}
+.sc-bar {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--teal);
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+}
+.score-card:not(.rank-1) .sc-bar { background: var(--border2); }
+
+/* ── INSIGHT BOX ─────────────────────────────────── */
+.insight-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--teal);
+  border-radius: 6px;
+  padding: 14px 18px;
+  margin-bottom: 1.75rem;
+  font-size: 12.5px;
+  color: var(--txt2);
+  line-height: 1.7;
+}
+.insight-box strong { color: var(--txt); }
+
+/* ── FILTERS ─────────────────────────────────────── */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 1.25rem;
+  align-items: center;
+}
+.filter-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--txt3);
+  margin-right: 4px;
+}
+.fbtn {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--txt2);
+  cursor: pointer;
+  transition: all .15s;
+  letter-spacing: .03em;
+}
+.fbtn:hover { border-color: var(--border2); color: var(--txt); }
+.fbtn.active {
+  background: var(--teal-bg);
+  border-color: var(--teal);
+  color: var(--teal-txt);
+}
+
+/* ── TABLE WRAPPER ───────────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg2);
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 1080px;
+}
+/* Sticky column */
+.sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--bg2);
+}
+/* Sticky header */
+.sticky-head {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--bg2);
+}
+.sticky-col.sticky-head {
+  z-index: 4;
+  background: var(--bg2);
+}
+
+/* Header row */
+thead tr {
+  border-bottom: 1px solid var(--border);
+}
+.th-corner {
+  padding: 12px 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--txt3);
+  border-right: 1px solid var(--border);
+  min-width: 148px;
+  white-space: nowrap;
+}
+.th-vendor {
+  padding: 10px 10px 9px;
+  border-left: 1px solid var(--border);
+  min-width: 120px;
+  vertical-align: top;
+}
+.th-v-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--txt);
+  line-height: 1.2;
+}
+.th-v-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--txt3);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+/* Body rows */
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background .1s;
+}
+tbody tr:hover { background: rgba(255,255,255,.02); }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:nth-child(even) .sticky-col { background: #13181f; }
+tbody tr:nth-child(even) { background: #13181f; }
+
+.td-cat {
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--txt2);
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+  font-family: var(--mono);
+}
+.td-cell {
+  padding: 7px 8px;
+  border-left: 1px solid var(--border);
+  text-align: center;
+  vertical-align: middle;
+}
+.td-cell.is-best {
+  box-shadow: inset 0 0 0 1.5px var(--teal);
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  padding: 3px 7px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+.b4 { background: var(--green-bg); color: var(--green-txt); }
+.b3 { background: var(--blue-bg);  color: var(--blue-txt);  }
+.b2 { background: var(--amber-bg); color: var(--amber-txt); }
+.b1 { background: var(--red-bg);   color: var(--red-txt);   }
+
+.cell-desc {
+  font-size: 9px;
+  color: var(--txt3);
+  line-height: 1.35;
+  margin-top: 4px;
+}
+
+/* ── GROUP SEPARATOR ─────────────────────────────── */
+.group-sep td {
+  background: var(--bg3) !important;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--txt3);
+  padding: 5px 14px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── LEGEND ──────────────────────────────────────── */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 1.25rem;
+  align-items: center;
+  font-size: 11px;
+  color: var(--txt3);
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-best {
+  display: inline-block;
+  width: 18px; height: 14px;
+  border: 1.5px solid var(--teal);
+  border-radius: 2px;
+  vertical-align: middle;
+}
+.legend-divider {
+  width: 1px; height: 14px;
+  background: var(--border);
+}
+
+/* ── FOOTER ──────────────────────────────────────── */
+.page-footer {
+  margin-top: 3rem;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--txt3);
+  max-width: 100%;
+}
+.footer-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.footer-inner a { color: var(--teal); text-decoration: none; }
+
+/* ── PRINT ───────────────────────────────────────── */
+@media print {
+  body { background: #fff; color: #000; }
+  .page-header { background: #fff; border-bottom: 1px solid #ccc; }
+  .fbtn { display: none; }
+  .table-wrap { overflow: visible; border: 1px solid #ccc; }
+  .sticky-col, .sticky-head { position: static; }
+}
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 900px) {
+  .scores-grid { grid-template-columns: repeat(4,1fr); }
+  .main { padding: 1rem; }
+}
+@media (max-width: 500px) {
+  .scores-grid { grid-template-columns: repeat(2,1fr); }
+  h1 { font-size: 1.1rem; }
+}
+
+/* ── ANIMATIONS ──────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(12px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.score-card { animation: fadeUp .4s ease both; }
+.score-card:nth-child(1){ animation-delay:.05s }
+.score-card:nth-child(2){ animation-delay:.08s }
+.score-card:nth-child(3){ animation-delay:.11s }
+.score-card:nth-child(4){ animation-delay:.14s }
+.score-card:nth-child(5){ animation-delay:.17s }
+.score-card:nth-child(6){ animation-delay:.20s }
+.score-card:nth-child(7){ animation-delay:.23s }
+.score-card:nth-child(8){ animation-delay:.26s }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-inner">
+    <div class="header-tag">Enterprise Storage Analysis</div>
+    <h1>Tier 1 Storage Vendor Comparison Matrix</h1>
+    <p class="header-sub">Full evaluation across 19 categories for FSI banking infrastructure — SMBC Indonesia Organic Growth Storage project. Replacement candidates for Pure Storage FA-X50R3 in DC + DR environments.</p>
+    <div class="header-meta">
+      <span><strong>Vendors:</strong> 8</span>
+      <span><strong>Categories:</strong> 19</span>
+      <span><strong>Scoring:</strong> 1–4 per cell (max 76)</span>
+      <span><strong>Context:</strong> VMware/ESXi · Rubrik · Jakarta DC · Sentul DR</span>
+      <span><strong>SLA Req:</strong> 24×7 · 30-min response · 4-hr resolve · 3-yr PKS</span>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <div class="scores-label">Overall Score Ranking</div>
+  <div class="scores-grid" id="scores-grid"></div>
+
+  <div class="insight-box">
+    <strong>SMBC Indonesia fit summary —</strong>
+    For FSI banking with VMware/ESXi + Rubrik integration, 24×7 local SLA, and 3-year fixed support in Indonesia:
+    <strong>Pure Storage</strong> (75/76), <strong>NetApp ASA</strong> (70/76), and <strong>HPE Alletra</strong> (69/76) rank highest overall.
+    <strong>Dell PowerStore T</strong> offers the strongest CapEx + OpEx hybrid story with broad local partner coverage.
+    <strong>Huawei</strong> carries regulatory/geopolitical risk in FSI banking and should be flagged to the client.
+    Outlined cells in the matrix indicate best-in-row across all vendors.
+  </div>
+
+  <div class="filter-row">
+    <span class="filter-label">Filter:</span>
+    <button class="fbtn active" data-group="all">All categories</button>
+    <button class="fbtn" data-group="performance">Performance</button>
+    <button class="fbtn" data-group="integration">Integration</button>
+    <button class="fbtn" data-group="resilience">Resilience</button>
+    <button class="fbtn" data-group="operations">Operations</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead id="t-head"></thead>
+      <tbody id="t-body"></tbody>
+    </table>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><span class="badge b4">Excellent</span> = 4 pts</span>
+    <span class="legend-item"><span class="badge b3">Good</span> = 3 pts</span>
+    <span class="legend-item"><span class="badge b2">Fair</span> = 2 pts</span>
+    <span class="legend-item"><span class="badge b1">Limited</span> = 1 pt</span>
+    <span class="legend-divider"></span>
+    <span class="legend-item"><span class="legend-best"></span> Best-in-row</span>
+  </div>
+
+</main>
+
+<footer class="page-footer">
+  <div class="footer-inner">
+    <span>Enterprise Storage Comparison · PT Packet Systems Indonesia (Logicalis) · Presales Analysis</span>
+    <span>Generated for SMBC Indonesia RFP · Confidential</span>
+  </div>
+</footer>
+
+<script>
+const vendors = [
+  { id:'dell',   name:'Dell PowerStore T', short:'Dell',    sub:'PowerStore T-Series' },
+  { id:'hpe',    name:'HPE Alletra',       short:'HPE',     sub:'Alletra 9000 / dHCI' },
+  { id:'netapp', name:'NetApp ASA',        short:'NetApp',  sub:'ASA A-Series' },
+  { id:'pure',   name:'Pure Storage //X',  short:'Pure',    sub:'FlashArray //X5 Gen' },
+  { id:'huawei', name:'Huawei OceanStor',  short:'Huawei',  sub:'Dorado V700' },
+  { id:'ibm',    name:'IBM FlashSystem',   short:'IBM',     sub:'FS9500 Series' },
+  { id:'lenovo', name:'Lenovo DM Series',  short:'Lenovo',  sub:'DM7100 / ONTAP-based' },
+  { id:'hitachi',name:'Hitachi VSP',       short:'Hitachi', sub:'VSP 5000 Series' },
+];
+
+const cats = [
+  { id:'arch',   name:'Architecture',          group:'performance',
+    desc:{ dell:'Unified NVMe scale-up', hpe:'NVMe-native, dHCI ready', netapp:'All-flash SAN+NAS', pure:'100% NVMe Purity OS', huawei:'All-NVMe active-active', ibm:'Spectrum Virtualize', lenovo:'ONTAP-based NVMe', hitachi:'Enterprise NVMe VSP' },
+    r:   { dell:3, hpe:4, netapp:4, pure:4, huawei:4, ibm:3, lenovo:2, hitachi:3 }},
+  { id:'iops',   name:'Performance (IOPS)',     group:'performance',
+    desc:{ dell:'~2M IOPS (3200T)', hpe:'~4.4M (Alletra 9000)', netapp:'~4M (ASA A900)', pure:'10M+ (//XL)', huawei:'21M (Dorado V700)', ibm:'16M (FS9500)', lenovo:'~1.5M (DM7100)', hitachi:'~4.2M (VSP 5100)' },
+    r:   { dell:3, hpe:3, netapp:3, pure:4, huawei:4, ibm:4, lenovo:2, hitachi:3 }},
+  { id:'latency',name:'Latency',                group:'performance',
+    desc:{ dell:'<500µs typical', hpe:'<150µs sub-ms', netapp:'<500µs standard', pure:'<150µs NVMe', huawei:'<300µs all-flash', ibm:'<70µs ultra-low', lenovo:'<1ms standard', hitachi:'<300µs enterprise' },
+    r:   { dell:3, hpe:4, netapp:3, pure:4, huawei:4, ibm:4, lenovo:2, hitachi:4 }},
+  { id:'dr',     name:'Data Reduction',         group:'performance',
+    desc:{ dell:'4:1 guaranteed DRR', hpe:'4:1 guaranteed', netapp:'5:1 avg (ONTAP)', pure:'5:1 guaranteed', huawei:'5:1+ inline', ibm:'5:1+ Spectrum', lenovo:'3–5:1 variable', hitachi:'4:1+ typical' },
+    r:   { dell:3, hpe:3, netapp:4, pure:4, huawei:4, ibm:4, lenovo:3, hitachi:3 }},
+  { id:'avail',  name:'Availability Guarantee', group:'performance',
+    desc:{ dell:'99.9999% six-nines', hpe:'100% data guarantee', netapp:'99.9999% SLA', pure:'99.9999% guarantee', huawei:'99.9999% SLA', ibm:'99.9999% SLA', lenovo:'99.999% five-nines', hitachi:'99.9999% enterprise' },
+    r:   { dell:4, hpe:4, netapp:4, pure:4, huawei:4, ibm:4, lenovo:3, hitachi:4 }},
+  { id:'cloud',  name:'Cloud Integration',      group:'integration',
+    desc:{ dell:'CloudIQ / APEX native', hpe:'GreenLake cloud-native', netapp:'BlueXP / Keystone', pure:'Cloud Block Store', huawei:'FusionCloud, limited', ibm:'IBM Cloud hybrid', lenovo:'Limited hyperscaler', hitachi:'Very limited' },
+    r:   { dell:4, hpe:4, netapp:4, pure:4, huawei:2, ibm:3, lenovo:2, hitachi:1 }},
+  { id:'nvme',   name:'NVMe-oF Support',        group:'integration',
+    desc:{ dell:'FC-NVMe, NVMe/TCP', hpe:'FC, TCP, RoCE full', netapp:'FC-NVMe, NVMe/TCP', pure:'FC, TCP, RoCE full', huawei:'NVMe-oF capable', ibm:'Full NVMe-oF suite', lenovo:'DM series capable', hitachi:'VSP 5000 capable' },
+    r:   { dell:3, hpe:4, netapp:3, pure:4, huawei:3, ibm:4, lenovo:3, hitachi:3 }},
+  { id:'mgmt',   name:'Management',             group:'integration',
+    desc:{ dell:'CloudIQ AI-driven', hpe:'InfoSight AI-driven', netapp:'Active IQ / BlueXP', pure:'Pure1 AI-driven', huawei:'OceanStor DeviceMgr', ibm:'Storage Insights SaaS', lenovo:'XClarity + ONTAP SM', hitachi:'Hitachi Ops Center' },
+    r:   { dell:3, hpe:4, netapp:4, pure:4, huawei:2, ibm:3, lenovo:3, hitachi:2 }},
+  { id:'api',    name:'API Ecosystem',          group:'integration',
+    desc:{ dell:'REST, Python, Ansible, TF', hpe:'REST, Ansible, TF', netapp:'ONTAP REST, full', pure:'REST, Python SDK, full', huawei:'REST, limited SDKs', ibm:'REST, Ansible, TF', lenovo:'REST via ONTAP', hitachi:'REST, limited' },
+    r:   { dell:4, hpe:3, netapp:4, pure:4, huawei:2, ibm:3, lenovo:3, hitachi:2 }},
+  { id:'cyber',  name:'Cyber Resilience',       group:'resilience',
+    desc:{ dell:'Cyber Sensing + Vault', hpe:'Cyber Resilience Vault', netapp:'SnapLock WORM + ARP', pure:'SafeMode Snapshots', huawei:'OceanCyber built-in', ibm:'SafeGuarded Copy', lenovo:'Via ONTAP features', hitachi:'ShadowImage basic' },
+    r:   { dell:3, hpe:4, netapp:4, pure:4, huawei:3, ibm:4, lenovo:3, hitachi:2 }},
+  { id:'ransom', name:'Ransomware Detection',   group:'resilience',
+    desc:{ dell:'CloudIQ cyber sensing', hpe:'InfoSight anomaly ML', netapp:'ARP ML built-in', pure:'SafeMode + anomaly', huawei:'Built-in OceanCyber', ibm:'ML anomaly detection', lenovo:'Via ONTAP ARP', hitachi:'Limited native' },
+    r:   { dell:3, hpe:3, netapp:4, pure:4, huawei:3, ibm:4, lenovo:3, hitachi:1 }},
+  { id:'snap',   name:'Snapshots',              group:'resilience',
+    desc:{ dell:'Space-efficient snaps', hpe:'Granular snapshots', netapp:'ONTAP Snapshots', pure:'SafeMode Snapshots', huawei:'Thin snapshots', ibm:'SafeGuarded Copy', lenovo:'ONTAP Snapshots', hitachi:'ShadowImage' },
+    r:   { dell:3, hpe:3, netapp:4, pure:4, huawei:3, ibm:4, lenovo:4, hitachi:3 }},
+  { id:'repl',   name:'Replication',            group:'resilience',
+    desc:{ dell:'Sync + async native', hpe:'Sync + Peer Persistence', netapp:'SnapMirror sync/async', pure:'ActiveCluster / ActiveDR', huawei:'HyperReplication', ibm:'Global + Metro Mirror', lenovo:'SnapMirror capable', hitachi:'TrueCopy + HUR' },
+    r:   { dell:3, hpe:4, netapp:4, pure:4, huawei:3, ibm:4, lenovo:4, hitachi:3 }},
+  { id:'upgrade',name:'Upgrade Program',        group:'operations',
+    desc:{ dell:'APEX NDU non-disruptive', hpe:'GreenLake flex NDU', netapp:'Keystone NDU', pure:'Evergreen//Forever', huawei:'NDU available', ibm:'Storage as a Service', lenovo:'TruScale NDU', hitachi:'Standard NDU only' },
+    r:   { dell:3, hpe:4, netapp:4, pure:4, huawei:3, ibm:3, lenovo:3, hitachi:2 }},
+  { id:'ai',     name:'AI Infrastructure',      group:'operations',
+    desc:{ dell:'CloudIQ AI-assisted', hpe:'GreenLake AI-ready', netapp:'ONTAP AI integrated', pure:'AIRI AI-ready infra', huawei:'AI ops capable', ibm:'Storage Scale / GPFS', lenovo:'Limited AI support', hitachi:'Limited native AI' },
+    r:   { dell:3, hpe:3, netapp:3, pure:4, huawei:3, ibm:4, lenovo:2, hitachi:2 }},
+  { id:'foot',   name:'Footprint (RU)',          group:'operations',
+    desc:{ dell:'2U compact', hpe:'2U compact', netapp:'2–4U varies', pure:'2U ultra-dense', huawei:'2U compact', ibm:'2U compact', lenovo:'2U standard', hitachi:'2–4U varies' },
+    r:   { dell:4, hpe:4, netapp:3, pure:4, huawei:4, ibm:4, lenovo:4, hitachi:3 }},
+  { id:'power',  name:'Power Efficiency',        group:'operations',
+    desc:{ dell:'Good NVMe efficiency', hpe:'Very good efficiency', netapp:'Good standard', pure:'Industry-leading', huawei:'Good efficiency', ibm:'Good standard', lenovo:'Good standard', hitachi:'Moderate only' },
+    r:   { dell:3, hpe:4, netapp:3, pure:4, huawei:3, ibm:3, lenovo:3, hitachi:2 }},
+  { id:'tenant', name:'Multi-Tenancy',           group:'operations',
+    desc:{ dell:'Storage Containers', hpe:'Multi-tenant capable', netapp:'SVMs full isolation', pure:'Tenant isolation', huawei:'Multi-tenant capable', ibm:'Multi-tenant capable', lenovo:'SVMs via ONTAP', hitachi:'Multi-tenant capable' },
+    r:   { dell:3, hpe:3, netapp:4, pure:3, huawei:3, ibm:3, lenovo:4, hitachi:3 }},
+  { id:'biz',    name:'Business Model',          group:'operations',
+    desc:{ dell:'CapEx + APEX (OpEx)', hpe:'CapEx + GreenLake', netapp:'CapEx + Keystone', pure:'CapEx + Evergreen//One', huawei:'CapEx only', ibm:'CapEx + STaaS', lenovo:'CapEx + TruScale', hitachi:'CapEx only' },
+    r:   { dell:4, hpe:4, netapp:4, pure:4, huawei:2, ibm:3, lenovo:3, hitachi:2 }},
+];
+
+const MAX = 4 * cats.length;
+const rLabel = ['', 'Limited', 'Fair', 'Good', 'Excellent'];
+const bClass  = ['', 'b1', 'b2', 'b3', 'b4'];
+
+// Calculate scores
+const scores = {};
+vendors.forEach(v => { scores[v.id] = cats.reduce((s, c) => s + c.r[v.id], 0); });
+const sorted = [...vendors].sort((a, b) => scores[b.id] - scores[a.id]);
+
+// Score cards
+const sg = document.getElementById('scores-grid');
+sorted.forEach((v, i) => {
+  const pct = Math.round(scores[v.id] / MAX * 100);
+  const d = document.createElement('div');
+  d.className = 'score-card' + (i === 0 ? ' rank-1' : '');
+  d.innerHTML = `
+    <div class="sc-rank">#${i + 1}</div>
+    <div class="vendor-short">${v.short}</div>
+    <div class="sc-score">${scores[v.id]}<span>/${MAX}</span></div>
+    <div class="sc-bar-bg"><div class="sc-bar" style="width:${pct}%"></div></div>`;
+  sg.appendChild(d);
+});
+
+// Group labels
+const groupNames = {
+  performance: 'Performance',
+  integration: 'Integration & Protocols',
+  resilience:  'Resilience & Security',
+  operations:  'Operations & Business',
+};
+
+let activeGroup = 'all';
+
+function render() {
+  const fc = activeGroup === 'all' ? cats : cats.filter(c => c.group === activeGroup);
+
+  // Build header
+  const th = document.getElementById('t-head');
+  th.innerHTML = `<tr>
+    <th class="th-corner sticky-col sticky-head">Category</th>
+    ${vendors.map(v => `<th class="th-vendor sticky-head">
+      <div class="th-v-name">${v.short}</div>
+      <div class="th-v-sub">${v.sub}</div>
+    </th>`).join('')}
+  </tr>`;
+
+  // Build body
+  const tb = document.getElementById('t-body');
+  let html = '';
+  let lastGroup = '';
+
+  fc.forEach(cat => {
+    const grpChange = cat.group !== lastGroup;
+    if (grpChange && activeGroup === 'all') {
+      html += `<tr class="group-sep"><td colspan="${vendors.length + 1}">${groupNames[cat.group]}</td></tr>`;
+      lastGroup = cat.group;
+    }
+    const best = Math.max(...vendors.map(v => cat.r[v.id]));
+    html += `<tr>
+      <td class="td-cat sticky-col">${cat.name}</td>
+      ${vendors.map(v => {
+        const r = cat.r[v.id];
+        const isBest = r === best;
+        return `<td class="td-cell${isBest ? ' is-best' : ''}">
+          <span class="badge ${bClass[r]}">${rLabel[r]}</span>
+          <div class="cell-desc">${cat.desc[v.id]}</div>
+        </td>`;
+      }).join('')}
+    </tr>`;
+  });
+  tb.innerHTML = html;
+}
+
+// Filter buttons
+document.querySelectorAll('.fbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeGroup = btn.dataset.group;
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
