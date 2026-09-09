@@ -13,7 +13,7 @@ Interactive HTML tools for enterprise infrastructure presales, built for banking
 |------|-------------|
 | [Huawei Storage Flashcard](https://andreassandhi.github.io/learning/huawei-storage-flashcard.html) | Quick-reference flashcard for Huawei OceanStor storage positioning |
 | [NKP Discovery Questions](https://andreassandhi.github.io/learning/nkp-discovery-questions.html) | 50-question discovery guide for Nutanix Kubernetes Platform deals |
-| [Storage Vendor Comparison](https://andreassandhi.github.io/learning/storage-vendor-comparisson.html) | 8-vendor × 19-category matrix for Tier 1 storage evaluation |
+| [Storage Vendor Comparison](https://andreassandhi.github.io/learning/storage-vendor-comparison.html) | 8-vendor × 19-category matrix for Tier 1 storage evaluation |
 | [Virtualization Comparison](https://andreassandhi.github.io/learning/virtualization-comparison.html) | Hypervisor and virtualization platform comparison matrix |
 
 ---
