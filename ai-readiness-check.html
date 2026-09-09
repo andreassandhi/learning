@@ -6,103 +6,156 @@
 <title>Checklist Kesiapan AI On-Premise</title>
 <style>
 :root{
-  --bg:#faf9f5; --card:#ffffff; --card-2:#f1efe8;
-  --text:#1a1a18; --text-2:#5f5e5a; --text-3:#888780;
+  --bg:#f7f6f2; --card:#ffffff; --card-2:#f1efe8;
+  --text:#1a1a18; --text-2:#5f5e5a; --text-3:#8a8880;
   --border:#e5e3da; --border-strong:#c9c7bd;
-  --accent:#c8613a; --accent-text:#993c1d;
-  --bar-track:#eeece4;
+  --accent:#c8613a;
+  --track:#eeece4;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
   --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#1f1e1b; --card:#292824; --card-2:#333330;
-    --text:#eceae2; --text-2:#b0aea5; --text-3:#8a8880;
-    --border:#3a3934; --border-strong:#52514b;
-    --accent:#d97a4f; --accent-text:#f0997b;
-    --bar-track:#333330;
+    --bg:#1c1b18; --card:#26251f; --card-2:#302f28;
+    --text:#eceae2; --text-2:#b0aea5; --text-3:#87857d;
+    --border:#38372f; --border-strong:#4f4e45;
+    --accent:#e0824f;
+    --track:#302f28;
+    --shadow:0 1px 3px rgba(0,0,0,.3);
   }
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.6;
-  display:flex;justify-content:center;padding:32px 16px}
-.wrap{width:100%;max-width:720px}
-h1{font-size:24px;font-weight:600;margin-bottom:6px}
-.sub{font-size:15px;color:var(--text-2);margin-bottom:24px}
-.hint{font-size:15px;color:var(--text-2);margin-bottom:16px}
+  display:flex;justify-content:center;padding:36px 16px 56px}
+.wrap{width:100%;max-width:740px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--text-2);
+  text-decoration:none;margin-bottom:20px}
+.back:hover{color:var(--text)}
+.hero{background:linear-gradient(135deg,#c8613a,#d4537e);border-radius:20px;padding:32px 28px;
+  color:#fff;margin-bottom:24px}
+.hero .eyebrow{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  opacity:.85;margin-bottom:10px}
+.hero h1{font-size:26px;font-weight:700;line-height:1.25;margin-bottom:10px}
+.hero p{font-size:15px;opacity:.92;max-width:52ch}
+.hint{font-size:15px;color:var(--text-2);margin-bottom:18px;display:flex;gap:9px;align-items:flex-start}
 .hint b{color:var(--text);font-weight:600}
-.chk-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;
-  border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;
-  transition:border-color .15s;background:var(--card);user-select:none}
-.chk-item:hover{border-color:var(--border-strong)}
-.chk-box{flex:0 0 22px;width:22px;height:22px;border:2px solid var(--border-strong);
-  border-radius:6px;display:flex;align-items:center;justify-content:center;margin-top:1px}
-.chk-item.on .chk-box{background:var(--accent);border-color:var(--accent)}
-.chk-item.on .chk-box::after{content:"";width:6px;height:11px;border:solid #fff;
+.hint svg{flex:0 0 20px;margin-top:2px;color:var(--accent)}
+.grid{display:grid;gap:10px}
+.item{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;background:var(--card);
+  border:1px solid var(--border);border-radius:14px;cursor:pointer;transition:all .15s;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;user-select:none}
+.item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--c);opacity:.5;transition:opacity .15s}
+.item:hover{border-color:var(--border-strong);transform:translateY(-1px)}
+.item.on::before{opacity:1}
+.ico{flex:0 0 42px;width:42px;height:42px;border-radius:11px;display:flex;align-items:center;
+  justify-content:center;background:var(--c-bg);color:var(--c);transition:all .15s}
+.ico svg{width:22px;height:22px}
+.item.on .ico{background:var(--c);color:#fff}
+.txt{flex:1;min-width:0}
+.dim{font-size:13px;color:var(--c);font-weight:600;margin-bottom:3px}
+.q{font-size:15px;color:var(--text);line-height:1.45}
+.chk{flex:0 0 24px;width:24px;height:24px;border:2px solid var(--border-strong);border-radius:7px;
+  display:flex;align-items:center;justify-content:center;margin-top:8px;transition:all .15s}
+.item.on .chk{background:var(--c);border-color:var(--c)}
+.item.on .chk::after{content:"";width:6px;height:11px;border:solid #fff;
   border-width:0 2.5px 2.5px 0;transform:rotate(45deg);margin-top:-2px}
-.chk-txt{flex:1}
-.chk-dim{font-size:13px;color:var(--text-2);font-weight:600;margin-bottom:3px}
-.chk-q{font-size:15px;color:var(--text)}
-.score{margin-top:20px;padding:20px;border-radius:12px;border:1px solid var(--border);background:var(--card)}
-.score-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.score{margin-top:22px;padding:24px;border-radius:16px;border:1px solid var(--border);
+  background:var(--card);box-shadow:var(--shadow)}
+.score-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
 .score-title{font-size:16px;font-weight:600}
-.score-num{font-size:24px;font-weight:600}
-.track{height:9px;background:var(--bar-track);border-radius:5px;overflow:hidden;margin-bottom:16px}
-.bar{height:100%;width:0%;background:var(--accent);transition:width .25s}
-.verdict{font-size:15px;line-height:1.6;color:var(--text-2)}
+.score-num{font-size:28px;font-weight:700}
+.track{height:12px;background:var(--track);border-radius:6px;overflow:hidden;margin-bottom:18px}
+.bar{height:100%;width:0%;border-radius:6px;transition:width .3s cubic-bezier(.4,0,.2,1),background .3s}
+.verdict{font-size:15px;line-height:1.65;color:var(--text-2)}
 .verdict b{color:var(--text);font-weight:600}
-.foot{margin-top:24px;font-size:13px;color:var(--text-3);text-align:center;line-height:1.6}
-.foot a{color:var(--accent-text)}
+.badge{display:inline-block;font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;
+  margin-bottom:10px}
+.foot{margin-top:26px;font-size:13px;color:var(--text-3);text-align:center;line-height:1.6}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Checklist kesiapan AI on-premise</h1>
-  <p class="sub">Seberapa siap organisasi Anda membangun infrastruktur AI sendiri, dibanding memakai AI tools publik (Claude, Gemini, ChatGPT, dll)?</p>
-  <p class="hint">Centang yang <b>sudah benar-benar dimiliki dan matang</b> di organisasi Anda — bukan yang "sedang direncanakan".</p>
-  <div id="list"></div>
+  <a href="index.html" class="back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Kembali ke daftar tool
+  </a>
+  <div class="hero">
+    <div class="eyebrow">Alat penilaian mandiri</div>
+    <h1>Seberapa siap Anda membangun AI on-premise?</h1>
+    <p>Sebelum investasi server, storage, dan GPU — nilai kesiapan organisasi Anda dibanding memakai AI tools publik seperti Claude, Gemini, atau ChatGPT.</p>
+  </div>
+  <p class="hint">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span>Centang yang <b>sudah benar-benar dimiliki dan matang</b> — bukan yang "sedang direncanakan".</span>
+  </p>
+  <div class="grid" id="list"></div>
   <div class="score">
     <div class="score-head">
       <span class="score-title">Skor kesiapan</span>
       <span class="score-num" id="num">0 / 8</span>
     </div>
     <div class="track"><div class="bar" id="bar"></div></div>
+    <div id="badge"></div>
     <p class="verdict" id="verdict">Centang di atas untuk melihat rekomendasi.</p>
   </div>
-  <p class="foot">Alat penilaian mandiri. Hasil hanya panduan awal — keputusan akhir tetap perlu mempertimbangkan regulasi, data sovereignty, dan TCO pada skala Anda.</p>
+  <p class="foot">Hasil hanya panduan awal. Keputusan akhir tetap perlu mempertimbangkan regulasi, data sovereignty, dan TCO pada skala Anda.</p>
 </div>
 <script>
+const I={
+  dev:'<path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>',
+  cicd:'<path d="M21 12a9 9 0 11-9-9c2.5 0 4.8 1 6.5 2.6"/><path d="M21 3v6h-6"/>',
+  container:'<path d="M21 16V8a2 2 0 00-1-1.7l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.7l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.3 7L12 12l8.7-5M12 22V12"/>',
+  virt:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
+  auto:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
+  backup:'<path d="M22 12A10 10 0 1112 2v10z"/><path d="M12 2a10 10 0 018 4l-8 6"/>',
+  storage:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0018 0V5M3 12a9 3 0 0018 0"/>',
+  gpu:'<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>'
+};
 const items=[
-["Tim developer","Punya ML engineer / MLOps / data engineer, bukan hanya dev aplikasi umum"],
-["CI/CD","Sudah punya pipeline untuk versioning model, data, dan kode — bukan hanya kode aplikasi"],
-["Container","Tim menguasai Kubernetes / OpenShift di produksi, bukan sekadar Docker dasar"],
-["Virtualisasi","Mengelola VMware / Nutanix dengan GPU passthrough secara mandiri"],
-["Automation","Provisioning, scaling, dan monitoring sudah terotomasi (IaC), bukan manual"],
-["Backup / DR","Punya strategi lindungi dataset, model terlatih, dan vector DB dengan DR teruji"],
-["Storage","Punya storage throughput tinggi (mis. all-flash) yang siap untuk beban AI"],
-["Server / GPU","Siap CapEx GPU + daya + pendingin, dan rencana refresh tiap 2–3 tahun"]
+["dev","Tim developer","Punya ML engineer / MLOps / data engineer, bukan hanya dev aplikasi umum","#378add","rgba(55,138,221,.12)"],
+["cicd","CI/CD","Punya pipeline versioning model, data, dan kode — bukan hanya kode aplikasi","#1d9e75","rgba(29,158,117,.12)"],
+["container","Container","Tim menguasai Kubernetes / OpenShift di produksi, bukan sekadar Docker dasar","#7f77dd","rgba(127,119,221,.14)"],
+["virt","Virtualisasi","Mengelola VMware / Nutanix dengan GPU passthrough secara mandiri","#d4537e","rgba(212,83,126,.13)"],
+["auto","Automation","Provisioning, scaling, dan monitoring sudah terotomasi (IaC), bukan manual","#ba7517","rgba(186,117,23,.13)"],
+["backup","Backup / DR","Punya strategi lindungi dataset, model terlatih, dan vector DB dengan DR teruji","#d85a30","rgba(216,90,48,.13)"],
+["storage","Storage","Punya storage throughput tinggi (mis. all-flash) yang siap untuk beban AI","#639922","rgba(99,153,34,.14)"],
+["gpu","Server / GPU","Siap CapEx GPU + daya + pendingin, dan rencana refresh tiap 2–3 tahun","#e24b4a","rgba(226,75,74,.12)"]
 ];
 const list=document.getElementById('list');
 const state=items.map(()=>false);
 items.forEach((it,i)=>{
+  const [icon,dim,q,c,cbg]=it;
   const d=document.createElement('div');
-  d.className='chk-item';
-  d.innerHTML='<div class="chk-box"></div><div class="chk-txt"><div class="chk-dim"></div><div class="chk-q"></div></div>';
-  d.querySelector('.chk-dim').textContent=it[0];
-  d.querySelector('.chk-q').textContent=it[1];
+  d.className='item';
+  d.style.setProperty('--c',c);
+  d.style.setProperty('--c-bg',cbg);
+  d.innerHTML='<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+I[icon]+'</svg></div>'+
+    '<div class="txt"><div class="dim"></div><div class="q"></div></div><div class="chk"></div>';
+  d.querySelector('.dim').textContent=dim;
+  d.querySelector('.q').textContent=q;
   d.onclick=()=>{state[i]=!state[i];d.classList.toggle('on',state[i]);update();};
   list.appendChild(d);
 });
 function update(){
   const n=state.filter(Boolean).length;
   document.getElementById('num').textContent=n+' / 8';
-  document.getElementById('bar').style.width=(n/8*100)+'%';
-  const v=document.getElementById('verdict');
-  let t;
-  if(n<=2){t='<b>Belum siap on-prem.</b> Mulai dari AI tools publik / API. Bangun aplikasi dan buktikan nilai bisnisnya dulu sebelum investasi infrastruktur.';}
-  else if(n<=4){t='<b>Setengah jalan.</b> Pertimbangkan private cloud atau hybrid — jalankan inference on-prem untuk data sensitif, sisanya tetap di publik. Belum saatnya AI POD penuh.';}
-  else if(n<=6){t='<b>Cukup matang.</b> Tier inference on-prem (server GPU sedang + storage cepat + backup) realistis. AI POD hanya jika Anda perlu melatih model sendiri.';}
-  else{t='<b>Siap on-prem penuh.</b> Jika beban kerja mencakup training/fine-tune skala besar dengan data sovereignty, AI POD masuk akal secara teknis dan TCO.';}
-  v.innerHTML=t;
+  const bar=document.getElementById('bar');
+  bar.style.width=(n/8*100)+'%';
+  let color,label,labelBg,labelC,t;
+  if(n<=2){color='#e24b4a';label='Belum siap';labelBg='rgba(226,75,74,.14)';labelC='#a32d2d';
+    t='<b>Belum siap on-prem.</b> Mulai dari AI tools publik / API. Bangun aplikasi dan buktikan nilai bisnisnya dulu sebelum investasi infrastruktur.';}
+  else if(n<=4){color='#ba7517';label='Setengah jalan';labelBg='rgba(186,117,23,.15)';labelC='#854f0b';
+    t='<b>Setengah jalan.</b> Pertimbangkan private cloud atau hybrid — jalankan inference on-prem untuk data sensitif, sisanya tetap di publik. Belum saatnya AI POD penuh.';}
+  else if(n<=6){color='#378add';label='Cukup matang';labelBg='rgba(55,138,221,.14)';labelC='#185fa5';
+    t='<b>Cukup matang.</b> Tier inference on-prem (server GPU sedang + storage cepat + backup) realistis. AI POD hanya jika Anda perlu melatih model sendiri.';}
+  else{color='#1d9e75';label='Siap on-prem';labelBg='rgba(29,158,117,.15)';labelC='#0f6e56';
+    t='<b>Siap on-prem penuh.</b> Jika beban kerja mencakup training/fine-tune skala besar dengan data sovereignty, AI POD masuk akal secara teknis dan TCO.';}
+  bar.style.background=color;
+  const b=document.getElementById('badge');
+  if(n===0){b.innerHTML='';}
+  else{b.innerHTML='<span class="badge" style="background:'+labelBg+';color:'+labelC+'">'+label+'</span>';}
+  document.getElementById('verdict').innerHTML=t;
 }
 update();
 </script>

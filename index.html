@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presales Tools — Andreas Sandhi</title>
+<style>
+:root{
+  --bg:#f7f6f2; --card:#ffffff;
+  --text:#1a1a18; --text-2:#5f5e5a; --text-3:#8a8880;
+  --border:#e5e3da; --border-strong:#c9c7bd;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#1c1b18; --card:#26251f;
+    --text:#eceae2; --text-2:#b0aea5; --text-3:#87857d;
+    --border:#38372f; --border-strong:#4f4e45;
+    --shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.6;
+  display:flex;justify-content:center;padding:40px 16px 60px}
+.wrap{width:100%;max-width:860px}
+.hero{background:linear-gradient(135deg,#534ab7,#c8613a);border-radius:22px;padding:40px 32px;
+  color:#fff;margin-bottom:32px}
+.hero .eyebrow{font-size:13px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  opacity:.85;margin-bottom:12px}
+.hero h1{font-size:30px;font-weight:700;line-height:1.2;margin-bottom:12px}
+.hero p{font-size:16px;opacity:.92;max-width:56ch}
+.sec{font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--text-3);margin:0 0 14px 4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:22px;text-decoration:none;color:inherit;transition:all .15s;
+  box-shadow:var(--shadow);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;top:0;right:0;height:4px;background:var(--c)}
+.card:hover{border-color:var(--border-strong);transform:translateY(-3px);
+  box-shadow:0 6px 16px rgba(0,0,0,.09)}
+.card-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;background:var(--c-bg);color:var(--c);margin-bottom:16px}
+.card-ico svg{width:23px;height:23px}
+.card h3{font-size:17px;font-weight:600;margin-bottom:7px;line-height:1.3}
+.card p{font-size:14px;color:var(--text-2);line-height:1.55;flex:1}
+.card .go{display:inline-flex;align-items:center;gap:5px;font-size:14px;font-weight:600;
+  color:var(--c);margin-top:16px}
+.card .go svg{width:15px;height:15px;transition:transform .15s}
+.card:hover .go svg{transform:translateX(3px)}
+.foot{margin-top:40px;padding-top:24px;border-top:1px solid var(--border);
+  font-size:13px;color:var(--text-3);text-align:center;line-height:1.7}
+.foot a{color:var(--text-2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">Presales Tools</div>
+    <h1>Alat bantu presales infrastruktur enterprise</h1>
+    <p>Kumpulan tool interaktif untuk membantu keputusan infrastruktur di sektor banking, government, dan enterprise di Indonesia.</p>
+  </div>
+
+  <p class="sec">Kesiapan &amp; strategi AI</p>
+  <div class="grid" style="margin-bottom:32px">
+    <a class="card" href="ai-readiness-check.html" style="--c:#c8613a;--c-bg:rgba(200,97,58,.12)">
+      <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+      <h3>Checklist Kesiapan AI On-Premise</h3>
+      <p>Nilai kesiapan organisasi membangun AI sendiri vs memakai AI tools publik, lintas 8 dimensi infrastruktur.</p>
+      <span class="go">Buka tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+    </a>
+  </div>
+
+  <p class="sec">Storage</p>
+  <div class="grid" style="margin-bottom:32px">
+    <a class="card" href="storage-vendor-comparisson.html" style="--c:#378add;--c-bg:rgba(55,138,221,.12)">
+      <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0018 0V5M3 12a9 3 0 0018 0"/></svg></div>
+      <h3>Storage Vendor Comparison</h3>
+      <p>Perbandingan vendor storage untuk membantu memilih solusi yang paling sesuai kebutuhan klien.</p>
+      <span class="go">Buka tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+    </a>
+    <a class="card" href="huawei-storage-flashcard.html" style="--c:#e24b4a;--c-bg:rgba(226,75,74,.12)">
+      <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M6 14h8"/></svg></div>
+      <h3>Huawei Storage Flashcard</h3>
+      <p>Kartu belajar untuk menghafal spesifikasi dan portofolio storage Huawei.</p>
+      <span class="go">Buka tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+    </a>
+  </div>
+
+  <p class="sec">Virtualisasi &amp; platform</p>
+  <div class="grid">
+    <a class="card" href="virtualization-comparison.html" style="--c:#7f77dd;--c-bg:rgba(127,119,221,.14)">
+      <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+      <h3>Virtualization Comparison</h3>
+      <p>Perbandingan platform virtualisasi (mis. VMware, Nutanix, Sangfor) untuk keputusan HCI klien.</p>
+      <span class="go">Buka tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+    </a>
+    <a class="card" href="nkp-discovery-questions.html" style="--c:#1d9e75;--c-bg:rgba(29,158,117,.13)">
+      <div class="card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3M12 17h.01"/></svg></div>
+      <h3>NKP Discovery Questions</h3>
+      <p>Daftar pertanyaan discovery untuk menggali kebutuhan klien terkait Nutanix Kubernetes Platform.</p>
+      <span class="go">Buka tool <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+    </a>
+  </div>
+
+  <p class="foot">Dibuat oleh Andreas Sandhi · <a href="https://github.com/andreassandhi/learning">github.com/andreassandhi/learning</a></p>
+</div>
+</body>
+</html>
