@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist Kesiapan AI On-Premise</title>
+<style>
+:root{
+  --bg:#faf9f5; --card:#ffffff; --card-2:#f1efe8;
+  --text:#1a1a18; --text-2:#5f5e5a; --text-3:#888780;
+  --border:#e5e3da; --border-strong:#c9c7bd;
+  --accent:#c8613a; --accent-text:#993c1d;
+  --bar-track:#eeece4;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#1f1e1b; --card:#292824; --card-2:#333330;
+    --text:#eceae2; --text-2:#b0aea5; --text-3:#8a8880;
+    --border:#3a3934; --border-strong:#52514b;
+    --accent:#d97a4f; --accent-text:#f0997b;
+    --bar-track:#333330;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.6;
+  display:flex;justify-content:center;padding:32px 16px}
+.wrap{width:100%;max-width:720px}
+h1{font-size:24px;font-weight:600;margin-bottom:6px}
+.sub{font-size:15px;color:var(--text-2);margin-bottom:24px}
+.hint{font-size:15px;color:var(--text-2);margin-bottom:16px}
+.hint b{color:var(--text);font-weight:600}
+.chk-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;
+  border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;
+  transition:border-color .15s;background:var(--card);user-select:none}
+.chk-item:hover{border-color:var(--border-strong)}
+.chk-box{flex:0 0 22px;width:22px;height:22px;border:2px solid var(--border-strong);
+  border-radius:6px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.chk-item.on .chk-box{background:var(--accent);border-color:var(--accent)}
+.chk-item.on .chk-box::after{content:"";width:6px;height:11px;border:solid #fff;
+  border-width:0 2.5px 2.5px 0;transform:rotate(45deg);margin-top:-2px}
+.chk-txt{flex:1}
+.chk-dim{font-size:13px;color:var(--text-2);font-weight:600;margin-bottom:3px}
+.chk-q{font-size:15px;color:var(--text)}
+.score{margin-top:20px;padding:20px;border-radius:12px;border:1px solid var(--border);background:var(--card)}
+.score-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.score-title{font-size:16px;font-weight:600}
+.score-num{font-size:24px;font-weight:600}
+.track{height:9px;background:var(--bar-track);border-radius:5px;overflow:hidden;margin-bottom:16px}
+.bar{height:100%;width:0%;background:var(--accent);transition:width .25s}
+.verdict{font-size:15px;line-height:1.6;color:var(--text-2)}
+.verdict b{color:var(--text);font-weight:600}
+.foot{margin-top:24px;font-size:13px;color:var(--text-3);text-align:center;line-height:1.6}
+.foot a{color:var(--accent-text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Checklist kesiapan AI on-premise</h1>
+  <p class="sub">Seberapa siap organisasi Anda membangun infrastruktur AI sendiri, dibanding memakai AI tools publik (Claude, Gemini, ChatGPT, dll)?</p>
+  <p class="hint">Centang yang <b>sudah benar-benar dimiliki dan matang</b> di organisasi Anda — bukan yang "sedang direncanakan".</p>
+  <div id="list"></div>
+  <div class="score">
+    <div class="score-head">
+      <span class="score-title">Skor kesiapan</span>
+      <span class="score-num" id="num">0 / 8</span>
+    </div>
+    <div class="track"><div class="bar" id="bar"></div></div>
+    <p class="verdict" id="verdict">Centang di atas untuk melihat rekomendasi.</p>
+  </div>
+  <p class="foot">Alat penilaian mandiri. Hasil hanya panduan awal — keputusan akhir tetap perlu mempertimbangkan regulasi, data sovereignty, dan TCO pada skala Anda.</p>
+</div>
+<script>
+const items=[
+["Tim developer","Punya ML engineer / MLOps / data engineer, bukan hanya dev aplikasi umum"],
+["CI/CD","Sudah punya pipeline untuk versioning model, data, dan kode — bukan hanya kode aplikasi"],
+["Container","Tim menguasai Kubernetes / OpenShift di produksi, bukan sekadar Docker dasar"],
+["Virtualisasi","Mengelola VMware / Nutanix dengan GPU passthrough secara mandiri"],
+["Automation","Provisioning, scaling, dan monitoring sudah terotomasi (IaC), bukan manual"],
+["Backup / DR","Punya strategi lindungi dataset, model terlatih, dan vector DB dengan DR teruji"],
+["Storage","Punya storage throughput tinggi (mis. all-flash) yang siap untuk beban AI"],
+["Server / GPU","Siap CapEx GPU + daya + pendingin, dan rencana refresh tiap 2–3 tahun"]
+];
+const list=document.getElementById('list');
+const state=items.map(()=>false);
+items.forEach((it,i)=>{
+  const d=document.createElement('div');
+  d.className='chk-item';
+  d.innerHTML='<div class="chk-box"></div><div class="chk-txt"><div class="chk-dim"></div><div class="chk-q"></div></div>';
+  d.querySelector('.chk-dim').textContent=it[0];
+  d.querySelector('.chk-q').textContent=it[1];
+  d.onclick=()=>{state[i]=!state[i];d.classList.toggle('on',state[i]);update();};
+  list.appendChild(d);
+});
+function update(){
+  const n=state.filter(Boolean).length;
+  document.getElementById('num').textContent=n+' / 8';
+  document.getElementById('bar').style.width=(n/8*100)+'%';
+  const v=document.getElementById('verdict');
+  let t;
+  if(n<=2){t='<b>Belum siap on-prem.</b> Mulai dari AI tools publik / API. Bangun aplikasi dan buktikan nilai bisnisnya dulu sebelum investasi infrastruktur.';}
+  else if(n<=4){t='<b>Setengah jalan.</b> Pertimbangkan private cloud atau hybrid — jalankan inference on-prem untuk data sensitif, sisanya tetap di publik. Belum saatnya AI POD penuh.';}
+  else if(n<=6){t='<b>Cukup matang.</b> Tier inference on-prem (server GPU sedang + storage cepat + backup) realistis. AI POD hanya jika Anda perlu melatih model sendiri.';}
+  else{t='<b>Siap on-prem penuh.</b> Jika beban kerja mencakup training/fine-tune skala besar dengan data sovereignty, AI POD masuk akal secara teknis dan TCO.';}
+  v.innerHTML=t;
+}
+update();
+</script>
+</body>
+</html>
